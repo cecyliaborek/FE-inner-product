@@ -1,3 +1,4 @@
+import math
 import Crypto.Util.number
 from charm.toolbox.integergroup import IntegerGroup
 import secrets
@@ -14,3 +15,6 @@ def generateGroup(sec_param):
 
 def getRandomZpElement(p):
     return secrets.randbelow(p)
+
+def encryptInExponent(base, exponent, modulus):
+    return math.pow(base, exponent, modulus)
