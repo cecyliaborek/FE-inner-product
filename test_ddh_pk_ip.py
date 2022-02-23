@@ -30,5 +30,5 @@ if __name__=="__main__":
     inner_prod = np.inner(x, y)
 
     print(inner_prod)
-
+    
     testFinResult()
