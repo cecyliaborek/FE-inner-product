@@ -1,16 +1,14 @@
 """
 Michel Abdalla et al. DDH based simple functional encryption inner product scheme
 
-* type: functional encryption (public key)
-* setting: integer
-* assumption: DDH
-
 | From: Abdalla, Michel et al. “Simple Functional Encryption Schemes for Inner Products.” 
 | Published in: Public-Key Cryptography -- PKC 2015. Berlin, Heidelberg: 
 |               Springer Berlin Heidelberg, 2015. 733–751. Web.
 | DOI: 10.1007/978-3-662-46447-2_33
-| Notes:
 
+* type:         functional encryption (public key)
+* setting:      integer
+* assumption:   DDH
 
 :Authors: Cecylia Borek
 :Date: 02/2022
