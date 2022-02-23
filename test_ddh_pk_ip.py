@@ -16,11 +16,10 @@ def testFinResult():
 
     final_result = fe.decrypt(mpk, ciphertext, func_key, y)
 
-    inner_prod = np.inner(x, y)
-
-    print(final_result)
-
-    assert final_result == inner_prod
+    try:
+        assert final_result == expected
+    except AssertionError:
+        print(f'The calculated inner product different than expected: {final_result} != {expected}')
 
 
 if __name__=="__main__":
