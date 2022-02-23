@@ -12,7 +12,7 @@ def testFinResult():
     y = [1, 2, 1, 2, 1, 2, 1, 2, 1, 2]
     ciphertext = fe.encrypt(mpk, x)
 
-    func_key = fe.deriveFunctionalKey(msk, y)
+    func_key = fe.getFunctionalKey(msk, y)
 
     final_result = fe.decrypt(mpk, ciphertext, func_key, y)
     expected = np.inner(x, y)

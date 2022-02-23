@@ -46,7 +46,7 @@ class DDH_PK():
         ciphertext = {'ct0': ct_0, 'ct': ct}
         return ciphertext
     
-    def deriveFunctionalKey(self, msk, y):
+    def getFunctionalKey(self, msk, y):
         s = msk['s']
         y = encodeVectorToGroupElements(y, self.group)
         return innerProduct(s, y)
