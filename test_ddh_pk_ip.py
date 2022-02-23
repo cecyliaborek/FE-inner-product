@@ -15,6 +15,7 @@ def testFinResult():
     func_key = fe.deriveFunctionalKey(msk, y)
 
     final_result = fe.decrypt(mpk, ciphertext, func_key, y)
+    expected = np.inner(x, y)
 
     try:
         assert final_result == expected
