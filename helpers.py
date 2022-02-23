@@ -46,10 +46,26 @@ def bytesToInt(xbytes: bytes) -> int:
 
 
 def getModulus(element: IntegerGroupElement) -> int:
+    """From a mod N returns N
+
+    Args:
+        element (IntegerGroupElement): Group element of form a mod N
+
+    Returns:
+        int: Modulus of modular expression, a mod N -> N
+    """
     mod = int(getMod(element))
     return mod
 
 def getInt(element: IntegerGroupElement) -> int:
+    """From a mod N returns a
+
+    Args:
+        element (IntegerGroupElement): Group element of form a mod N
+
+    Returns:
+        int: Integer part of modular expression, a mod N -> a
+    """
     return int(toInt(element))
     
 
