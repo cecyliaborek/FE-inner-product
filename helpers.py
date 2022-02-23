@@ -13,11 +13,12 @@ def generateGroup(sec_param):
     p = group.p
     return (group, g, p)
 
-def innerProduct(a, b):
+def innerProduct(a, b, group):
     n = min(len(a), len(b))
     inner = 0
     for i in range(n):
-        inner = (a[i]) * (b[i])
+        curr = decodeFromGroupElement(a[i] * b[i], group)
+        inner = inner + curr
     return inner
 
 def decodeVectorFromGroupElements(vector: List[IntegerGroupElement], group: IntegerGroup) -> List[int]:
