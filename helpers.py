@@ -2,7 +2,6 @@ import charm
 from charm.toolbox.integergroup import IntegerGroup
 from typing import List
 from charm.core.math.integer import getMod, toInt
-from sympy import true
 
 IntegerGroupElement = charm.core.math.integer.integer
 
