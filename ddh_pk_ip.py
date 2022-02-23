@@ -17,10 +17,12 @@ Michel Abdalla et al. DDH based simple functional encryption inner product schem
 """
 from helpers import encodeAsGroupElement, encodeVectorToGroupElements, generateGroup, getInt, getModulus, innerProduct
 import numpy as np
-from sympy.ntheory import discrete_log
-import logging, sys
+import logging
 
-logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+FORMAT = "[%(filename)s: %(funcName)17s() ] %(message)s"
+logging.basicConfig(format=FORMAT)
+logger.setLevel(logging.DEBUG)
 
 class DDH_PK():
     
@@ -30,35 +32,44 @@ class DDH_PK():
 
     def setUp(self, security_parameter, message_length):
         (self.group, self.g, self.p) = generateGroup(security_parameter)
+        logger.debug('g: ' + str(self.g))
         s = [self.group.random() for _ in range(message_length)]
-        logging.debug('s:' + str(s))
+        logger.debug('s:' + str(s))
         h = [self.g ** s[i] for i in range(message_length)]
+        logger.debug('h: ' + str(h))
         mpk = {'h': h}
         msk = {'s': s}
         return (mpk, msk)
 
     def encrypt(self, mpk, x):
         r = self.group.random()
+        logger.debug('r: ' + str(r))
         ct_0 = self.g ** r
+        logger.debug('ct0: ' + str(ct_0))
         h = mpk['h']
         x = encodeVectorToGroupElements(x, self.group)
+        logger.debug('x encoded: ' + str(x))
         ct = [(h[i] ** r) * (self.g ** x[i]) for i in range(len(x))]
+        logger.debug('ct: ' + str(ct))
         ciphertext = {'ct0': ct_0, 'ct': ct}
         return ciphertext
     
     def getFunctionalKey(self, msk, y):
         s = msk['s']
         y = encodeVectorToGroupElements(y, self.group)
-        return innerProduct(s, y)
+        logger.debug('y encoded: ' + str(y))
+        return innerProduct(s, y, self.group)
         
     def decrypt(self, mpk, ciphertext, sk_y, y):
         ct_0 = ciphertext['ct0']
         ct = ciphertext['ct']
         t = [ct[i] ** y[i] for i in range(len(ct))]
-        logging.debug('t: '+ str(t))
+        logger.debug('t: '+ str(t))
         product = np.prod(t)
-        logging.debug('product of t:'+ str(product))
+        logger.debug('product of t:'+ str(product))
         intermediate = product/(ct_0 ** sk_y)
+        logger.debug('ct0/sky: ' + str(ct_0 ** sk_y))
+        logger.debug('product of t/ct0^ksy: ' + str(intermediate))
 
         pi = getInt(intermediate)
         
