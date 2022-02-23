@@ -74,3 +74,22 @@ def product(vector: List[int]) -> int:
     for element in vector:
         prod = prod * element
     return prod
+
+
+def dummyDiscreteLog(a: int, b: int, mod: int, limit: int) -> int:
+    """Calculates discrete log of b in the base of a modulo mod, provided the
+    result is smaller than limit. Otherwise returns None
+
+    Args:
+        a (int): base of logarithm
+        b (int): number from which the logarithm is calculated
+        mod (int): modulus of logarithm 
+        limit (int): limit within which the result should lie
+
+    Returns:
+        int: result of logarithm or None if the result was not found withn the limit
+    """
+    for i in range(limit) :
+        if pow(a, i, mod) == b:
+            return i
+    return None
