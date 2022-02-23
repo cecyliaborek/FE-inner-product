@@ -15,7 +15,7 @@ Michel Abdalla et al. DDH based simple functional encryption inner product schem
 :Authors: Cecylia Borek
 :Date: 02/2022
 """
-from helpers import encodeAsGroupElement, encodeVectorToGroupElements, generateGroup, getInt, getModulus, innerProduct
+from helpers import dummyDiscreteLog, encodeVectorToGroupElements, generateGroup, getInt, getModulus, innerProduct
 import numpy as np
 import logging
 
