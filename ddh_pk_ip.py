@@ -76,5 +76,5 @@ class DDH_PK():
         p = getModulus(self.g)
         g = getInt(self.g)
 
-        inner_prod = discrete_log(p, pi, g)
+        inner_prod = dummyDiscreteLog(g, pi, p, 200)
         return inner_prod
