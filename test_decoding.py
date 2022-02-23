@@ -4,21 +4,14 @@ from helpers import decodeFromGroupElement, encodeAsGroupElement
 
 
 group = IntegerGroup()
-group.paramgen(1024)
+group.paramgen(8)
 
 g = group.randomGen()
 
-num = 89473
+num = 123
 
 num_encoded = encodeAsGroupElement(num, group)
-
-print(num_encoded)
-print(type(num_encoded))
-
+print(type(num_encoded), ': ', num_encoded)
 
 num_decoded = decodeFromGroupElement(num_encoded, group)
-
-
-
-print(num_decoded)
-print(type(num_decoded))
+print(type(num_decoded), ': ', num_decoded)
