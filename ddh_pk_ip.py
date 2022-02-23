@@ -63,6 +63,7 @@ class DDH_PK():
     def decrypt(self, mpk, ciphertext, sk_y, y):
         ct_0 = ciphertext['ct0']
         ct = ciphertext['ct']
+        y = encodeVectorToGroupElements(y, self.group)
         t = [ct[i] ** y[i] for i in range(len(ct))]
         logger.debug('t: '+ str(t))
         product = np.prod(t)
