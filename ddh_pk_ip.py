@@ -7,15 +7,21 @@ Michel Abdalla et al. DDH based simple functional encryption inner product schem
 | DOI: 10.1007/978-3-662-46447-2_33
 
 * type:         functional encryption (public key)
-* setting:      integer
+* setting:      SchnorrGroup mod p
 * assumption:   DDH
 
 :Authors: Cecylia Borek
 :Date: 02/2022
 """
-from helpers import dummyDiscreteLog, encodeVectorToGroupElements, generateGroup, getInt, getModulus, innerProduct
+from typing import Dict, List, Tuple
+from helpers import dummyDiscreteLog, generateGroup, getInt, getModulus, innerProduct, reduceVectorMod
 import numpy as np
 import logging
+import charm
+
+from wrong_vector_size_error import WrongVectorSizeError
+
+IntegerGroupElement = charm.core.math.integer.Element
 
 logger = logging.getLogger(__name__)
 FORMAT = "[%(filename)s: %(funcName)17s() ] %(message)s"
@@ -28,52 +34,92 @@ class DDH_PK():
         self.group = group
         self.g = g
 
-    def setUp(self, security_parameter, message_length):
-        (self.group, self.g, self.p) = generateGroup(security_parameter)
-        logger.debug('g: ' + str(self.g))
-        s = [self.group.random() for _ in range(message_length)]
-        logger.debug('s:' + str(s))
-        h = [self.g ** s[i] for i in range(message_length)]
-        logger.debug('h: ' + str(h))
-        mpk = {'h': h}
-        msk = {'s': s}
+    def setUp(self, security_parameter: int, vector_length: int) -> Tuple(List[IntegerGroupElement], List[IntegerGroupElement]):
+        """Configures instance of DDH public key FE scheme.
+        Samples an intger Schnorr group of order p, where p is a prime number of
+        bitsize equal to security_parameter. The public parameters describing the
+        sampled group are saved as class instance members. Sets the supported message
+        (vector) length to vector_length. Returns master public key and master secret 
+        key as vectors of group elements.
+
+        Args:
+            security_parameter (int): security parameter, bitsize of order of the sampled group 
+            vector_length (int): supported vector length
+
+        Returns:
+            Tuple(List[IntegerGroupElement], List[IntegerGroupElement]): (master public key,
+                                                                            master secret key)
+        """
+        (self.group, self.g) = generateGroup(security_parameter)
+        self.p = getModulus(self.g)
+        s = [self.group.random() for _ in range(vector_length)]
+        h = [self.g ** s[i] for i in range(vector_length)]
+        mpk = h
+        msk = s
         return (mpk, msk)
 
-    def encrypt(self, mpk, x):
+    def encrypt(self, mpk: List[IntegerGroupElement], x: List[int]) -> Dict(str, List[IntegerGroupElement]):
+        """Encrypts integer vector x
+
+        Args:
+            mpk (List[IntegerGroupElement]): master public key
+            x (List[int]): integer vector to be encrypted
+
+        Raises:
+            WrongVectorSizeError: if the provided vector is longer than supported vector length
+
+        Returns:
+            Dict(str, List[IntegerGroupElement]): ciphertext corresponding to vector x
+        """
+        if len(x) > len(mpk):
+            raise WrongVectorSizeError(f'Vector {x} too long for the configured FE')
         r = self.group.random()
-        logger.debug('r: ' + str(r))
         ct_0 = self.g ** r
-        logger.debug('ct0: ' + str(ct_0))
-        h = mpk['h']
-        x = encodeVectorToGroupElements(x, self.group)
-        logger.debug('x encoded: ' + str(x))
-        ct = [(h[i] ** r) * (self.g ** x[i]) for i in range(len(x))]
-        logger.debug('ct: ' + str(ct))
+        x = reduceVectorMod(x, self.p)
+        ct = [(mpk[i] ** r) * (self.g ** x[i]) for i in range(len(x))]
         ciphertext = {'ct0': ct_0, 'ct': ct}
         return ciphertext
     
-    def getFunctionalKey(self, msk, y):
-        s = msk['s']
-        y = encodeVectorToGroupElements(y, self.group)
-        logger.debug('y encoded: ' + str(y))
-        return innerProduct(s, y, self.group)
+    def getFunctionalKey(self, msk: List[IntegerGroupElement], y: List[int]) -> int:
+        """Derives functional key for calculating inner product with vector y
+
+        Args:
+            msk (List[IntegerGroupElement]): master secret key
+            y (List[int]): vector for which the functional key should be calculatd
+
+        Raises:
+            WrongVectorSizeError: if the vector y is longer than the supported vector length
+
+        Returns:
+            int: Functional key corresponding to vector y
+        """
+        if len(y) > len(msk):
+            raise WrongVectorSizeError(f'Vector {y} too long for the configured FE')
+        y = reduceVectorMod(y, self.p)
+        return innerProduct(msk, y)
         
-    def decrypt(self, mpk, ciphertext, sk_y, y):
+    def decrypt(self, mpk, ciphertext: Dict[str, IntegerGroupElement], sk_y: int, y: List[int]) -> int:
+        """Returns inner product of vector y and vector x encrypted in ciphertext
+
+        Args:
+            mpk (_type_): _description_
+            ciphertext (List[]): _description_
+            sk_y (int): functional decryption key for vector y
+            y (List[y]): vector y
+
+        Returns:
+            int: inner product of x and y or None if the inner product was not found
+            within the limit
+        """
         ct_0 = ciphertext['ct0']
         ct = ciphertext['ct']
-        y = encodeVectorToGroupElements(y, self.group)
+        y = reduceVectorMod(y, self.p)
         t = [ct[i] ** y[i] for i in range(len(ct))]
-        logger.debug('t: '+ str(t))
         product = np.prod(t)
-        logger.debug('product of t:'+ str(product))
         intermediate = product/(ct_0 ** sk_y)
-        logger.debug('ct0/sky: ' + str(ct_0 ** sk_y))
-        logger.debug('product of t/ct0^ksy: ' + str(intermediate))
 
         pi = getInt(intermediate)
-        
-        p = getModulus(self.g)
         g = getInt(self.g)
 
-        inner_prod = dummyDiscreteLog(g, pi, p, 200)
+        inner_prod = dummyDiscreteLog(g, pi, self.p, 200)
         return inner_prod

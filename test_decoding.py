@@ -8,10 +8,10 @@ group.paramgen(8)
 
 g = group.randomGen()
 
-num = 123
+num = b'123'
 
-num_encoded = encodeAsGroupElement(num, group)
-print(type(num_encoded), ': ', num_encoded)
+e = group.encode(num)
+print(e)
 
-num_decoded = decodeFromGroupElement(num_encoded, group)
-print(type(num_decoded), ': ', num_decoded)
+d = group.decode(e)
+print(d.decode('utf-8'))

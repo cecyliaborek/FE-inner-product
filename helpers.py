@@ -3,21 +3,28 @@ from charm.toolbox.integergroup import IntegerGroup
 from typing import List
 from charm.core.math.integer import getMod, toInt
 
-IntegerGroupElement = charm.core.math.integer.integer
+IntegerGroupElement = charm.core.math.integer.Element
 
 def generateGroup(sec_param):
+    """Generates a Schnorr mod p where p is a prime of
+    bitsize equal to sec_param
+
+    Args:
+        sec_param (int): security parameter, bitsize of p
+
+    Returns:
+        Tuple(): _description_
+    """
     group = IntegerGroup()
     group.paramgen(sec_param)
     g = group.randomGen()
-    p = group.p
-    return (group, g, p)
+    return (group, g)
 
-def innerProduct(a, b, group):
+def innerProduct(a: List[IntegerGroupElement], b: List[int]) -> int:
     n = min(len(a), len(b))
     inner = 0
     for i in range(n):
-        curr = decodeFromGroupElement(a[i] * b[i], group)
-        inner = inner + curr
+        inner += getInt(a[i]) * b[i]
     return inner
 
 def decodeVectorFromGroupElements(vector: List[IntegerGroupElement], group: IntegerGroup) -> List[int]:
@@ -93,3 +100,18 @@ def dummyDiscreteLog(a: int, b: int, mod: int, limit: int) -> int:
         if pow(a, i, mod) == b:
             return i
     return None
+
+def reduceVectorMod(vector: List[int], mod: int) -> List[int]:
+    """Reduces all elements of a vector modulo mod
+
+    Args:
+        vector (List[int]): list representation of vetor
+        mod (int): modulus
+
+    Returns:
+        List[int]: vector with reduced elements
+    """
+    reduced = []
+    for i in range(len(vector)):
+        reduced.append(vector[i] % mod)
+    return reduced
