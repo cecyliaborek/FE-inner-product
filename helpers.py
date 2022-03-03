@@ -1,9 +1,9 @@
-import charm
 from charm.toolbox.integergroup import IntegerGroup
+import charm
 from typing import List
 from charm.core.math.integer import getMod, toInt
 
-IntegerGroupElement = charm.core.math.integer.Element
+IntegerGroupElement = charm.core.math.integer.integer
 
 def generateGroup(sec_param):
     """Generates a Schnorr mod p where p is a prime of

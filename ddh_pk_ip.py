@@ -21,7 +21,7 @@ import charm
 
 from wrong_vector_size_error import WrongVectorSizeError
 
-IntegerGroupElement = charm.core.math.integer.Element
+IntegerGroupElement = charm.core.math.integer.integer
 
 logger = logging.getLogger(__name__)
 FORMAT = "[%(filename)s: %(funcName)17s() ] %(message)s"
@@ -34,7 +34,7 @@ class DDH_PK():
         self.group = group
         self.g = g
 
-    def setUp(self, security_parameter: int, vector_length: int) -> Tuple(List[IntegerGroupElement], List[IntegerGroupElement]):
+    def setUp(self, security_parameter: int, vector_length: int) -> Tuple[List[IntegerGroupElement], List[IntegerGroupElement]]:
         """Configures instance of DDH public key FE scheme.
         Samples an intger Schnorr group of order p, where p is a prime number of
         bitsize equal to security_parameter. The public parameters describing the
@@ -47,7 +47,7 @@ class DDH_PK():
             vector_length (int): supported vector length
 
         Returns:
-            Tuple(List[IntegerGroupElement], List[IntegerGroupElement]): (master public key,
+            Tuple[List[IntegerGroupElement], List[IntegerGroupElement]]: (master public key,
                                                                             master secret key)
         """
         (self.group, self.g) = generateGroup(security_parameter)
@@ -58,7 +58,7 @@ class DDH_PK():
         msk = s
         return (mpk, msk)
 
-    def encrypt(self, mpk: List[IntegerGroupElement], x: List[int]) -> Dict(str, List[IntegerGroupElement]):
+    def encrypt(self, mpk: List[IntegerGroupElement], x: List[int]) -> Dict[str, List[IntegerGroupElement]]:
         """Encrypts integer vector x
 
         Args:
@@ -69,7 +69,7 @@ class DDH_PK():
             WrongVectorSizeError: if the provided vector is longer than supported vector length
 
         Returns:
-            Dict(str, List[IntegerGroupElement]): ciphertext corresponding to vector x
+            Dict[str, List[IntegerGroupElement]]: ciphertext corresponding to vector x
         """
         if len(x) > len(mpk):
             raise WrongVectorSizeError(f'Vector {x} too long for the configured FE')
