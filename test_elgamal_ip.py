@@ -1,29 +1,30 @@
 from elgamal_ip import ElGamalInnerProduct
+import numpy as np
+import unittest
 
 
-s = ElGamalInnerProduct()
-
-pk, sk = s.setUp(1024, 4)
+class TestElGamalInnerProduct(unittest.TestCase):
 
 
-print(sk[1]['x'])
-print(type(sk[1]['x']))
+    def test_fin_result(self):
 
-g = pk[0]['g']
+        fe = ElGamalInnerProduct()
+        pk, sk = fe.setUp(1024, 4)
 
-print(g)
-print(type(g))
+        y = [1, 1, 1, 1]
+        x = [1, 2, 3, 4]
+        key_y = fe.getFunctionalKey(sk, y)
+        c_x = fe.encrypt(pk, x)
+        obtained_inner_prod = fe.decrypt(pk, c_x, key_y, y)
+        expected_inner_prod = np.inner(x, y)
+
+        try:
+            assert obtained_inner_prod == expected_inner_prod
+        except AssertionError:
+            print(f'The calculated inner product different than expected: {obtained_inner_prod} != {expected_inner_prod}')
+        print(f'The calculated inner product same as expected!: {obtained_inner_prod} == {expected_inner_prod}')
 
 
-y = [1, 1, 1, 1]
 
-
-key = s.getFunctionalKey(sk, y)
-
-print(key)
-print(type(key))
-
-
-x = [1, 2, 3, 4]
-
-ct = s.encrypt(pk, x)
+if __name__=="__main__":
+    unittest.main()

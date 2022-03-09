@@ -14,34 +14,32 @@ Michel Abdalla et al. generic functional encryption inner product scheme based o
 :Authors: Cecylia Borek
 :Date: 03/2022
 """
+from distutils.log import debug
 from charm.toolbox.integergroup import IntegerGroupQ, integer
-from charm.schemes.pkenc.pkenc_elgamal85 import ElGamal
+from additive_elgamal import AdditiveElGamal, ElGamalCipher
 from typing import List, Dict
 from helpers import getInt, getModulus, reduceVectorMod, intToBytes
 from wrong_vector_size_error import WrongVectorSizeError
 import charm
+import numpy as np
 
 IntegerGroupElement = charm.core.math.integer.integer
 
+debug = True
 class ElGamalInnerProduct:
 
+    p = integer(148829018183496626261556856344710600327516732500226144177322012998064772051982752493460332138204351040296264880017943408846937646702376203733370973197019636813306480144595809796154634625021213611577190781215296823124523899584781302512549499802030946698512327294159881907114777803654670044046376468983244647367)
+    q = integer(74414509091748313130778428172355300163758366250113072088661006499032386025991376246730166069102175520148132440008971704423468823351188101866685486598509818406653240072297904898077317312510606805788595390607648411562261949792390651256274749901015473349256163647079940953557388901827335022023188234491622323683)
+    elgamal_group = IntegerGroupQ()
+    elgamal = AdditiveElGamal(elgamal_group, p, q)
+    elgamal_params = {"group": elgamal_group, "p": int(p)}
+    
     def setUp(self, security_parameter: int, vector_length: int):
-        p = integer(148829018183496626261556856344710600327516732500226144177322012998064772051982752493460332138204351040296264880017943408846937646702376203733370973197019636813306480144595809796154634625021213611577190781215296823124523899584781302512549499802030946698512327294159881907114777803654670044046376468983244647367)
-        q = integer(74414509091748313130778428172355300163758366250113072088661006499032386025991376246730166069102175520148132440008971704423468823351188101866685486598509818406653240072297904898077317312510606805788595390607648411562261949792390651256274749901015473349256163647079940953557388901827335022023188234491622323683)
-        elgamal_group = IntegerGroupQ()
-        self.elgamal = ElGamal(elgamal_group, p, q)
+        
         master_public_key = [None] * vector_length
         master_secret_key = [None] * vector_length
         for i in range(vector_length):
             (master_public_key[i], master_secret_key[i]) = self.elgamal.keygen(secparam=security_parameter)
-
-        self.elgamal_params = {}
-        self.elgamal_params['group'] = elgamal_group
-        self.elgamal_params['g'] = master_public_key[0]['g']
-        self.elgamal_params['q'] = getModulus(self.elgamal_params['g'])
-
-        # generator to make elgamal additively homomorphic
-
         return (master_public_key, master_secret_key)
 
     def getFunctionalKey(self, msk, y: List[int]) -> int:
@@ -59,7 +57,7 @@ class ElGamalInnerProduct:
         """
         if len(y) > len(msk):
             raise WrongVectorSizeError(f'Vector {y} too long for the configured FE')
-        y = reduceVectorMod(y, self.elgamal_params['q'])
+        y = reduceVectorMod(y, self.elgamal_params['p'])
         key = 0
         for i in range(len(y)):
             key += getInt(msk[i]['x']) * y[i]
@@ -81,9 +79,9 @@ class ElGamalInnerProduct:
         if len(x) > len(mpk):
             raise WrongVectorSizeError(f'Vector {x} too long for the configured FE')
         r = self.elgamal_params['group'].random()
-        ct_0 = self.elgamal_params['g'] ** r
-        x = reduceVectorMod(x, self.elgamal_params['q'])
-        ct = [self.elgamal.encrypt(mpk[i], intToBytes(x[i])) for i in range(len(x))]
+        ct_0 = mpk[0]['g'] ** r
+        x = reduceVectorMod(x, self.elgamal_params['p'])
+        ct = [self.elgamal.encrypt(mpk[i], x[i], r) for i in range(len(x))]
         ciphertext = {'ct0': ct_0, 'ct': ct}
         return ciphertext
 
@@ -102,5 +100,14 @@ class ElGamalInnerProduct:
         """
         ct_0 = ciphertext['ct0']
         ct = ciphertext['ct']
-        y = reduceVectorMod(y, self.elgamal_params['q'])
+        y = reduceVectorMod(y, self.elgamal_params['p'])
+
+        c1 = ct_0
+        c2 = np.product([ct[i]['c2'] ** y[i] for i in range(len(ct))])
+        sk = {'x': sk_y}
+        pk = mpk[0]
+
+        # constructing ciphertext for additive ElGamal
+        c = ElGamalCipher({'c1':c1, 'c2':c2})
+        return self.elgamal.decrypt(pk, sk, c)
         
