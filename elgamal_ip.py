@@ -17,7 +17,6 @@ Michel Abdalla et al. generic functional encryption inner product scheme based o
 from charm.toolbox.integergroup import IntegerGroupQ, integer
 from additive_elgamal import AdditiveElGamal, ElGamalCipher
 from typing import List, Dict, Tuple
-from fe_scheme import PKFunctionalEncryption
 from helpers import getInt, reduceVectorMod
 from wrong_vector_size_error import WrongVectorSizeError
 import charm
