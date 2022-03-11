@@ -47,19 +47,23 @@ class ElGamalCipher(dict):
         return None
 
 class AdditiveElGamal(PKEnc):
+    """Additive ElGamal Scheme allowing for shared randomness for encryption.
+    Group generator is an instance variable.
+
+    Args:
+        PKEnc (_type_): _description_
+    """
     
     def __init__(self, groupObj, p=0, q=0):
         PKEnc.__init__(self)
         global group
         group = groupObj
-        if group.groupSetting() == 'integer':
-            group.p, group.q, group.r = p, q, 2
+        group.p, group.q, group.r = p, q, 2
         self.g = group.randomGen()
 
     def keygen(self, secparam=1024):
-        if group.groupSetting() == 'integer':
-            if group.p == 0 or group.q == 0:
-                group.paramgen(secparam)
+        if group.p == 0 or group.q == 0:
+            group.paramgen(secparam)
         # x is private, g is public param
         x = group.random(); h = self.g ** x
         if debug:
@@ -83,10 +87,7 @@ class AdditiveElGamal(PKEnc):
     def decrypt(self, pk, sk, c):
         s = c['c1'] ** sk['x']
         m = c['c2'] * (s ** -1)
-        if group.groupSetting() == 'integer':
-            M = m % group.p
-        elif group.groupSetting() == 'elliptic_curve':
-            M = group.decode(m)
+        M = m % group.p
         if debug: print('m => %s' % m)
         if debug: print('dec M => %s' % M)
         x = dummyDiscreteLog(getInt(pk['g']), M, getModulus(pk['g']), 200)

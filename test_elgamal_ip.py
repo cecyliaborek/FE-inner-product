@@ -1,4 +1,4 @@
-from elgamal_ip import ElGamalInnerProduct
+from elgamal_ip import ElGamalInnerProductFE
 import numpy as np
 import unittest
 
@@ -8,7 +8,7 @@ class TestElGamalInnerProduct(unittest.TestCase):
 
     def test_fin_result(self):
 
-        fe = ElGamalInnerProduct()
+        fe = ElGamalInnerProductFE()
         pk, sk = fe.setUp(1024, 4)
 
         y = [1, 1, 1, 1]

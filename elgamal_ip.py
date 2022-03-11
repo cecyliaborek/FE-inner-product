@@ -11,22 +11,31 @@ Michel Abdalla et al. generic functional encryption inner product scheme based o
 * setting:      SchnorrGroup mod p
 * assumption:   DDH
 
-:Authors: Cecylia Borek
-:Date: 03/2022
+:Authors:       Cecylia Borek
+:Date:          03/2022
 """
-from distutils.log import debug
 from charm.toolbox.integergroup import IntegerGroupQ, integer
 from additive_elgamal import AdditiveElGamal, ElGamalCipher
-from typing import List, Dict
-from helpers import getInt, getModulus, reduceVectorMod, intToBytes
+from typing import List, Dict, Tuple
+from fe_scheme import PKFunctionalEncryption
+from helpers import getInt, reduceVectorMod
 from wrong_vector_size_error import WrongVectorSizeError
 import charm
 import numpy as np
 
 IntegerGroupElement = charm.core.math.integer.integer
+ElGamalKey = Dict[str, IntegerGroupElement]
+
 
 debug = True
-class ElGamalInnerProduct:
+class ElGamalInnerProductCipher(dict):
+    def __init__(self, ct):
+        if type(ct) != dict: assert False, "Not a dictionary!"
+        if not set(ct).issubset(['ct0', 'ct']): assert False, "'ct0','ct' keys not present."
+        dict.__init__(self, ct)
+
+
+class ElGamalInnerProductFE:
 
     p = integer(148829018183496626261556856344710600327516732500226144177322012998064772051982752493460332138204351040296264880017943408846937646702376203733370973197019636813306480144595809796154634625021213611577190781215296823124523899584781302512549499802030946698512327294159881907114777803654670044046376468983244647367)
     q = integer(74414509091748313130778428172355300163758366250113072088661006499032386025991376246730166069102175520148132440008971704423468823351188101866685486598509818406653240072297904898077317312510606805788595390607648411562261949792390651256274749901015473349256163647079940953557388901827335022023188234491622323683)
@@ -34,7 +43,7 @@ class ElGamalInnerProduct:
     elgamal = AdditiveElGamal(elgamal_group, p, q)
     elgamal_params = {"group": elgamal_group, "p": int(p)}
     
-    def setUp(self, security_parameter: int, vector_length: int):
+    def setUp(self, security_parameter: int, vector_length: int) -> Tuple[List[ElGamalKey], List[ElGamalKey]]:
         
         master_public_key = [None] * vector_length
         master_secret_key = [None] * vector_length
@@ -42,11 +51,11 @@ class ElGamalInnerProduct:
             (master_public_key[i], master_secret_key[i]) = self.elgamal.keygen(secparam=security_parameter)
         return (master_public_key, master_secret_key)
 
-    def getFunctionalKey(self, msk, y: List[int]) -> int:
+    def getFunctionalKey(self, msk: List[ElGamalKey], y: List[int]) -> int:
         """Derives functional key for calculating inner product with vector y
 
         Args:
-            msk (List[IntegerGroupElement]): master secret key
+            msk (List[ElGamalKey]): master secret key
             y (List[int]): vector for which the functional key should be calculatd
 
         Raises:
@@ -63,7 +72,7 @@ class ElGamalInnerProduct:
             key += getInt(msk[i]['x']) * y[i]
         return key
 
-    def encrypt(self, mpk: List[Dict[str, IntegerGroupElement]], x: List[int]) -> Dict[str, List[IntegerGroupElement]]:
+    def encrypt(self, mpk: List[ElGamalKey], x: List[int]) -> ElGamalInnerProductCipher:
         """Encrypts integer vector x
 
         Args:
@@ -82,10 +91,10 @@ class ElGamalInnerProduct:
         ct_0 = mpk[0]['g'] ** r
         x = reduceVectorMod(x, self.elgamal_params['p'])
         ct = [self.elgamal.encrypt(mpk[i], x[i], r) for i in range(len(x))]
-        ciphertext = {'ct0': ct_0, 'ct': ct}
+        ciphertext = ElGamalInnerProductCipher({'ct0': ct_0, 'ct': ct})
         return ciphertext
 
-    def decrypt(self, mpk, ciphertext: Dict[str, IntegerGroupElement], sk_y: int, y: List[int]) -> int:
+    def decrypt(self, mpk: List[ElGamalKey], ciphertext: ElGamalInnerProductCipher, sk_y: int, y: List[int]) -> int:
         """Returns inner product of vector y and vector x encrypted in ciphertext
 
         Args:
@@ -104,8 +113,8 @@ class ElGamalInnerProduct:
 
         c1 = ct_0
         c2 = np.product([ct[i]['c2'] ** y[i] for i in range(len(ct))])
-        sk = {'x': sk_y}
-        pk = mpk[0]
+        sk = {'x': sk_y} # contructing the secret key in a form acceptable by ElGamal
+        pk = mpk[0] # public key same for all i's
 
         # constructing ciphertext for additive ElGamal
         c = ElGamalCipher({'c1':c1, 'c2':c2})
