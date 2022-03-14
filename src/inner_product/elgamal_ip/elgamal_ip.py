@@ -15,9 +15,9 @@ Michel Abdalla et al. generic functional encryption inner product scheme based o
 :Date:          03/2022
 """
 from charm.toolbox.integergroup import IntegerGroupQ, integer
-from additive_elgamal import AdditiveElGamal, ElGamalCipher
 from typing import List, Dict, Tuple
-from helpers import getInt, reduceVectorMod
+from src.helpers.additive_elgamal import AdditiveElGamal, ElGamalCipher
+from src.helpers.helpers import reduceVectorMod, getInt
 from wrong_vector_size_error import WrongVectorSizeError
 import charm
 import numpy as np
@@ -25,8 +25,9 @@ import numpy as np
 IntegerGroupElement = charm.core.math.integer.integer
 ElGamalKey = Dict[str, IntegerGroupElement]
 
-
 debug = True
+
+
 class ElGamalInnerProductCipher(dict):
     def __init__(self, ct):
         if type(ct) != dict: assert False, "Not a dictionary!"
@@ -35,15 +36,16 @@ class ElGamalInnerProductCipher(dict):
 
 
 class ElGamalInnerProductFE:
-
-    p = integer(148829018183496626261556856344710600327516732500226144177322012998064772051982752493460332138204351040296264880017943408846937646702376203733370973197019636813306480144595809796154634625021213611577190781215296823124523899584781302512549499802030946698512327294159881907114777803654670044046376468983244647367)
-    q = integer(74414509091748313130778428172355300163758366250113072088661006499032386025991376246730166069102175520148132440008971704423468823351188101866685486598509818406653240072297904898077317312510606805788595390607648411562261949792390651256274749901015473349256163647079940953557388901827335022023188234491622323683)
+    p = integer(
+        148829018183496626261556856344710600327516732500226144177322012998064772051982752493460332138204351040296264880017943408846937646702376203733370973197019636813306480144595809796154634625021213611577190781215296823124523899584781302512549499802030946698512327294159881907114777803654670044046376468983244647367)
+    q = integer(
+        74414509091748313130778428172355300163758366250113072088661006499032386025991376246730166069102175520148132440008971704423468823351188101866685486598509818406653240072297904898077317312510606805788595390607648411562261949792390651256274749901015473349256163647079940953557388901827335022023188234491622323683)
     elgamal_group = IntegerGroupQ()
     elgamal = AdditiveElGamal(elgamal_group, p, q)
     elgamal_params = {"group": elgamal_group, "p": int(p)}
-    
+
     def setUp(self, security_parameter: int, vector_length: int) -> Tuple[List[ElGamalKey], List[ElGamalKey]]:
-        
+
         master_public_key = [None] * vector_length
         master_secret_key = [None] * vector_length
         for i in range(vector_length):
@@ -112,10 +114,9 @@ class ElGamalInnerProductFE:
 
         c1 = ct_0
         c2 = np.product([ct[i]['c2'] ** y[i] for i in range(len(ct))])
-        sk = {'x': sk_y} # contructing the secret key in a form acceptable by ElGamal
-        pk = mpk[0] # public key same for all i's
+        sk = {'x': sk_y}  # constructing the secret key in a form acceptable by ElGamal
+        pk = mpk[0]  # public key same for all i's
 
         # constructing ciphertext for additive ElGamal
-        c = ElGamalCipher({'c1':c1, 'c2':c2})
+        c = ElGamalCipher({'c1': c1, 'c2': c2})
         return self.elgamal.decrypt(pk, sk, c)
-        

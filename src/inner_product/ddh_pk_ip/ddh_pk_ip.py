@@ -14,11 +14,11 @@ Michel Abdalla et al. DDH based simple functional encryption inner product schem
 :Date: 02/2022
 """
 from typing import Dict, List, Tuple
-from helpers import dummyDiscreteLog, generateGroup, getInt, getModulus, innerProduct, reduceVectorMod
 import numpy as np
 import logging
 import charm
 
+from src.helpers.helpers import generateGroup, getModulus, reduceVectorMod, innerProduct, getInt, dummyDiscreteLog
 from wrong_vector_size_error import WrongVectorSizeError
 
 IntegerGroupElement = charm.core.math.integer.integer
@@ -28,13 +28,15 @@ FORMAT = "[%(filename)s: %(funcName)17s() ] %(message)s"
 logging.basicConfig(format=FORMAT)
 logger.setLevel(logging.DEBUG)
 
+
 class DDH_PK():
-    
+
     def __init__(self, group=None, g=None) -> None:
         self.group = group
         self.g = g
 
-    def setUp(self, security_parameter: int, vector_length: int) -> Tuple[List[IntegerGroupElement], List[IntegerGroupElement]]:
+    def setUp(self, security_parameter: int, vector_length: int) -> Tuple[
+        List[IntegerGroupElement], List[IntegerGroupElement]]:
         """Configures instance of DDH public key FE scheme.
         Samples an intger Schnorr group of order p, where p is a prime number of
         bitsize equal to security_parameter. The public parameters describing the
@@ -79,7 +81,7 @@ class DDH_PK():
         ct = [(mpk[i] ** r) * (self.g ** x[i]) for i in range(len(x))]
         ciphertext = {'ct0': ct_0, 'ct': ct}
         return ciphertext
-    
+
     def getFunctionalKey(self, msk: List[IntegerGroupElement], y: List[int]) -> int:
         """Derives functional key for calculating inner product with vector y
 
@@ -97,7 +99,7 @@ class DDH_PK():
             raise WrongVectorSizeError(f'Vector {y} too long for the configured FE')
         y = reduceVectorMod(y, self.p)
         return innerProduct(msk, y)
-        
+
     def decrypt(self, mpk, ciphertext: Dict[str, IntegerGroupElement], sk_y: int, y: List[int]) -> int:
         """Returns inner product of vector y and vector x encrypted in ciphertext
 
@@ -116,7 +118,7 @@ class DDH_PK():
         y = reduceVectorMod(y, self.p)
         t = [ct[i] ** y[i] for i in range(len(ct))]
         product = np.prod(t)
-        intermediate = product/(ct_0 ** sk_y)
+        intermediate = product / (ct_0 ** sk_y)
 
         pi = getInt(intermediate)
         g = getInt(self.g)

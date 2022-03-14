@@ -1,6 +1,6 @@
 from charm.toolbox.integergroup import IntegerGroup
 
-from helpers import getModulus
+from helpers.helpers import getModulus
 
 group = IntegerGroup()
 group.paramgen(1024)

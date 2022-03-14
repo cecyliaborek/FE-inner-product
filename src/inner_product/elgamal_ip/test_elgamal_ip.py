@@ -5,7 +5,6 @@ import unittest
 
 class TestElGamalInnerProduct(unittest.TestCase):
 
-
     def test_fin_result(self):
 
         fe = ElGamalInnerProductFE()
@@ -21,10 +20,10 @@ class TestElGamalInnerProduct(unittest.TestCase):
         try:
             assert obtained_inner_prod == expected_inner_prod
         except AssertionError:
-            print(f'The calculated inner product different than expected: {obtained_inner_prod} != {expected_inner_prod}')
+            print(
+                f'The calculated inner product different than expected: {obtained_inner_prod} != {expected_inner_prod}')
         print(f'The calculated inner product same as expected!: {obtained_inner_prod} == {expected_inner_prod}')
 
 
-
-if __name__=="__main__":
+if __name__ == "__main__":
     unittest.main()

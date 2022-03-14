@@ -1,7 +1,7 @@
 import numpy as np
-from ddh_pk_ip import DDH_PK
 
-    
+from src.inner_product.ddh_pk_ip.ddh_pk_ip import DDH_PK
+
 
 def testFinResult():
     fe = DDH_PK()
@@ -28,6 +28,5 @@ def testFinResult():
     print(f'The calculated inner product same as expected!: {final_result} == {expected}')
 
 
-if __name__=="__main__":
-    
+if __name__ == "__main__":
     testFinResult()

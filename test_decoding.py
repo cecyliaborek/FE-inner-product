@@ -1,6 +1,6 @@
 from charm.toolbox.integergroup import IntegerGroup
 
-from helpers import decodeFromGroupElement, encodeAsGroupElement
+from helpers.helpers import decodeFromGroupElement, encodeAsGroupElement
 
 
 group = IntegerGroup()

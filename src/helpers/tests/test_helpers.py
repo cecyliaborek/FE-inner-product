@@ -1,6 +1,6 @@
 from charm.toolbox.integergroup import integer, IntegerGroup
 
-from helpers import getInt, getModulus
+from helpers.helpers import getInt, getModulus
 import unittest
 
 class TestHelpers(unittest.TestCase):
@@ -17,7 +17,7 @@ class TestHelpers(unittest.TestCase):
         group.paramgen(1024)
         g = group.randomGen()
 
-        mod = getModulus(g)
+        mod = getModulus
 
 
 

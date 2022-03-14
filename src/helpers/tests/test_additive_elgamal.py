@@ -1,4 +1,4 @@
-from additive_elgamal import AdditiveElGamal
+from helpers.additive_elgamal import AdditiveElGamal
 from charm.toolbox.integergroup import IntegerGroupQ, integer
 
 
