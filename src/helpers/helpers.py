@@ -5,12 +5,13 @@ from charm.core.math.integer import getMod, toInt
 
 IntegerGroupElement = charm.core.math.integer.integer
 
+
 def generateGroup(sec_param):
     """Generates a Schnorr mod p where p is a prime of
-    bitsize equal to sec_param
+    bit-size equal to sec_param
 
     Args:
-        sec_param (int): security parameter, bitsize of p
+        sec_param (int): security parameter, bit-size of p
 
     Returns:
         Tuple(): _description_
@@ -20,12 +21,23 @@ def generateGroup(sec_param):
     g = group.randomGen()
     return (group, g)
 
-def innerProduct(a: List[IntegerGroupElement], b: List[int]) -> int:
+
+def inner_product_group_vector(a: List[IntegerGroupElement], b: List[int]) -> int:
+    """
+    Calculates inner product of group element vector and integer vector
+    Args:
+        a: group elements vector
+        b: integer vector
+
+    Returns: inner product of the vectors
+
+    """
     n = min(len(a), len(b))
     inner = 0
     for i in range(n):
         inner += getInt(a[i]) * b[i]
     return inner
+
 
 def decodeVectorFromGroupElements(vector: List[IntegerGroupElement], group: IntegerGroup) -> List[int]:
     decoded_vector = []
@@ -33,8 +45,10 @@ def decodeVectorFromGroupElements(vector: List[IntegerGroupElement], group: Inte
         decoded_vector.append(bytesToInt(group.decode(vector[i])))
     return decoded_vector
 
+
 def decodeFromGroupElement(element: IntegerGroupElement, group: IntegerGroup) -> int:
     return bytesToInt(group.decode(element))
+
 
 def encodeVectorToGroupElements(vector: List[int], group: IntegerGroup) -> List[IntegerGroupElement]:
     encoded_vector = []
@@ -42,11 +56,14 @@ def encodeVectorToGroupElements(vector: List[int], group: IntegerGroup) -> List[
         encoded_vector.append(encodeAsGroupElement(vector[i], group))
     return encoded_vector
 
+
 def encodeAsGroupElement(x: int, group: IntegerGroup) -> IntegerGroupElement:
     return group.encode(intToBytes(x))
 
+
 def intToBytes(x: int) -> bytes:
     return x.to_bytes((x.bit_length() + 7) // 8, byteorder='big')
+
 
 def bytesToInt(xbytes: bytes) -> int:
     return int.from_bytes(xbytes, byteorder='big')
@@ -64,6 +81,7 @@ def getModulus(element: IntegerGroupElement) -> int:
     mod = int(getMod(element))
     return mod
 
+
 def getInt(element: IntegerGroupElement) -> int:
     """From a mod N returns a
 
@@ -74,7 +92,7 @@ def getInt(element: IntegerGroupElement) -> int:
         int: Integer part of modular expression, a mod N -> a
     """
     return int(toInt(element))
-    
+
 
 def product(vector: List[int]) -> int:
     prod = 1
@@ -85,7 +103,7 @@ def product(vector: List[int]) -> int:
 
 def dummyDiscreteLog(a: int, b: int, mod: int, limit: int) -> int:
     """Calculates discrete log of b in the base of a modulo mod, provided the
-    result is smaller than limit. Otherwise returns None
+    result is smaller than limit. Otherwise, returns None
 
     Args:
         a (int): base of logarithm
@@ -96,16 +114,17 @@ def dummyDiscreteLog(a: int, b: int, mod: int, limit: int) -> int:
     Returns:
         int: result of logarithm or None if the result was not found withn the limit
     """
-    for i in range(limit) :
+    for i in range(limit):
         if pow(a, i, mod) == b:
             return i
     return None
+
 
 def reduceVectorMod(vector: List[int], mod: int) -> List[int]:
     """Reduces all elements of a vector modulo mod
 
     Args:
-        vector (List[int]): list representation of vetor
+        vector (List[int]): list representation of vector
         mod (int): modulus
 
     Returns:
