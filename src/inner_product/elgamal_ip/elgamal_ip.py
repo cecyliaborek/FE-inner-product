@@ -17,7 +17,7 @@ Michel Abdalla et al. generic functional encryption inner product scheme based o
 from charm.toolbox.integergroup import IntegerGroupQ, integer
 from typing import List, Dict, Tuple
 from src.helpers.additive_elgamal import AdditiveElGamal, ElGamalCipher
-from src.helpers.helpers import reduceVectorMod, getInt
+from src.helpers.helpers import reduce_vector_mod, get_int
 from wrong_vector_size_error import WrongVectorSizeError
 import charm
 import numpy as np
@@ -67,10 +67,10 @@ class ElGamalInnerProductFE:
         """
         if len(y) > len(msk):
             raise WrongVectorSizeError(f'Vector {y} too long for the configured FE')
-        y = reduceVectorMod(y, self.elgamal_params['p'])
+        y = reduce_vector_mod(y, self.elgamal_params['p'])
         key = 0
         for i in range(len(y)):
-            key += getInt(msk[i]['x']) * y[i]
+            key += get_int(msk[i]['x']) * y[i]
         return key
 
     def encrypt(self, mpk: List[ElGamalKey], x: List[int]) -> ElGamalInnerProductCipher:
@@ -90,7 +90,7 @@ class ElGamalInnerProductFE:
             raise WrongVectorSizeError(f'Vector {x} too long for the configured FE')
         r = self.elgamal_params['group'].random()
         ct_0 = mpk[0]['g'] ** r
-        x = reduceVectorMod(x, self.elgamal_params['p'])
+        x = reduce_vector_mod(x, self.elgamal_params['p'])
         ct = [self.elgamal.encrypt(mpk[i], x[i], r) for i in range(len(x))]
         ciphertext = ElGamalInnerProductCipher({'ct0': ct_0, 'ct': ct})
         return ciphertext
@@ -110,7 +110,7 @@ class ElGamalInnerProductFE:
         """
         ct_0 = ciphertext['ct0']
         ct = ciphertext['ct']
-        y = reduceVectorMod(y, self.elgamal_params['p'])
+        y = reduce_vector_mod(y, self.elgamal_params['p'])
 
         c1 = ct_0
         c2 = np.product([ct[i]['c2'] ** y[i] for i in range(len(ct))])

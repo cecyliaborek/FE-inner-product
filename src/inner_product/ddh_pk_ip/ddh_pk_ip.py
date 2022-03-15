@@ -18,7 +18,7 @@ import numpy as np
 import logging
 import charm
 
-from src.helpers.helpers import generateGroup, getModulus, reduceVectorMod, innerProduct, getInt, dummyDiscreteLog
+from src.helpers.helpers import generate_group, get_modulus, reduce_vector_mod, inner_product_group_vector, get_int, dummy_discrete_log
 from wrong_vector_size_error import WrongVectorSizeError
 
 IntegerGroupElement = charm.core.math.integer.integer
@@ -52,8 +52,8 @@ class DDH_PK():
             Tuple[List[IntegerGroupElement], List[IntegerGroupElement]]: (master public key,
                                                                             master secret key)
         """
-        (self.group, self.g) = generateGroup(security_parameter)
-        self.p = getModulus(self.g)
+        (self.group, self.g) = generate_group(security_parameter)
+        self.p = get_modulus(self.g)
         s = [self.group.random() for _ in range(vector_length)]
         h = [self.g ** s[i] for i in range(vector_length)]
         mpk = h
@@ -77,7 +77,7 @@ class DDH_PK():
             raise WrongVectorSizeError(f'Vector {x} too long for the configured FE')
         r = self.group.random()
         ct_0 = self.g ** r
-        x = reduceVectorMod(x, self.p)
+        x = reduce_vector_mod(x, self.p)
         ct = [(mpk[i] ** r) * (self.g ** x[i]) for i in range(len(x))]
         ciphertext = {'ct0': ct_0, 'ct': ct}
         return ciphertext
@@ -97,8 +97,8 @@ class DDH_PK():
         """
         if len(y) > len(msk):
             raise WrongVectorSizeError(f'Vector {y} too long for the configured FE')
-        y = reduceVectorMod(y, self.p)
-        return innerProduct(msk, y)
+        y = reduce_vector_mod(y, self.p)
+        return inner_product_group_vector(msk, y)
 
     def decrypt(self, mpk, ciphertext: Dict[str, IntegerGroupElement], sk_y: int, y: List[int]) -> int:
         """Returns inner product of vector y and vector x encrypted in ciphertext
@@ -115,13 +115,13 @@ class DDH_PK():
         """
         ct_0 = ciphertext['ct0']
         ct = ciphertext['ct']
-        y = reduceVectorMod(y, self.p)
+        y = reduce_vector_mod(y, self.p)
         t = [ct[i] ** y[i] for i in range(len(ct))]
         product = np.prod(t)
         intermediate = product / (ct_0 ** sk_y)
 
-        pi = getInt(intermediate)
-        g = getInt(self.g)
+        pi = get_int(intermediate)
+        g = get_int(self.g)
 
-        inner_prod = dummyDiscreteLog(g, pi, self.p, 200)
+        inner_prod = dummy_discrete_log(g, pi, self.p, 200)
         return inner_prod

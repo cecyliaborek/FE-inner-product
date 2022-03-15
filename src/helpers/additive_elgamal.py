@@ -15,7 +15,7 @@ Adapted from Charm pkenc_elgamal85 scheme (https://jhuisi.github.io/charm/charm/
 
 from charm.toolbox.PKEnc import PKEnc
 
-from src.helpers.helpers import dummyDiscreteLog, getInt, getModulus
+from src.helpers.helpers import dummy_discrete_log, get_int, get_modulus
 
 debug = False
 
@@ -94,5 +94,5 @@ class AdditiveElGamal(PKEnc):
         M = m % group.p
         if debug: print('m => %s' % m)
         if debug: print('dec M => %s' % M)
-        x = dummyDiscreteLog(getInt(pk['g']), M, getModulus(pk['g']), 200)
+        x = dummy_discrete_log(get_int(pk['g']), M, get_modulus(pk['g']), 200)
         return x
