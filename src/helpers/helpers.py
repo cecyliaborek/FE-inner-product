@@ -2,8 +2,34 @@ from charm.toolbox.integergroup import IntegerGroup
 import charm
 from typing import List
 from charm.core.math.integer import getMod, toInt
+from random import SystemRandom
+
+from src.errors.vector_size_mismatch_error import VectorSizeMismatchError
 
 IntegerGroupElement = charm.core.math.integer.integer
+
+
+def get_random_from_Zl(l: int) -> int:
+    """
+    Returns a random number from finite field of integers modulo l
+    Args:
+        l: modulus of ff
+
+    Returns: random number from Zl
+
+    """
+    cryptogen = SystemRandom()
+    return cryptogen.randrange(l)
+
+
+def add_vectors_mod(a: List[int], b: List[int], mod: int) -> List[int]:
+    if len(a) != len(b):
+        raise VectorSizeMismatchError
+    n = len(a)
+    out = [None] * n
+    for i in range(n):
+        out[i] = (a[i] + b[i]) % mod
+    return out
 
 
 def generate_group(sec_param):
@@ -32,10 +58,30 @@ def inner_product_group_vector(a: List[IntegerGroupElement], b: List[int]) -> in
     Returns: inner product of the vectors
 
     """
-    n = min(len(a), len(b))
+    if len(a) != len(b):
+        raise VectorSizeMismatchError
+    n = len(a)
     inner = 0
     for i in range(n):
         inner += get_int(a[i]) * b[i]
+    return inner
+
+
+def inner_product_modulo(a: List[int], b: List[int], mod: int) -> int:
+    if len(a) != len(b):
+        raise VectorSizeMismatchError
+    inner = 0
+    for i in range(len(a)):
+        inner += a[i] * b[i] % mod
+    return inner
+
+
+def inner_product(a: List[int], b: List[int]) -> int:
+    if len(a) != len(b):
+        raise VectorSizeMismatchError
+    inner = 0
+    for i in range(len(a)):
+        inner += a[i] * b[i]
     return inner
 
 

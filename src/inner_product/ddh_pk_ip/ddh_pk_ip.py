@@ -19,7 +19,7 @@ import logging
 import charm
 
 from src.helpers.helpers import generate_group, get_modulus, reduce_vector_mod, inner_product_group_vector, get_int, dummy_discrete_log
-from wrong_vector_size_error import WrongVectorSizeError
+from src.errors.vector_size_mismatch_error import VectorSizeMismatchError
 
 IntegerGroupElement = charm.core.math.integer.integer
 
@@ -74,7 +74,7 @@ class DDH_PK():
             Dict[str, List[IntegerGroupElement]]: ciphertext corresponding to vector x
         """
         if len(x) > len(mpk):
-            raise WrongVectorSizeError(f'Vector {x} too long for the configured FE')
+            raise VectorSizeMismatchError(f'Vector {x} too long for the configured FE')
         r = self.group.random()
         ct_0 = self.g ** r
         x = reduce_vector_mod(x, self.p)
@@ -96,7 +96,7 @@ class DDH_PK():
             int: Functional key corresponding to vector y
         """
         if len(y) > len(msk):
-            raise WrongVectorSizeError(f'Vector {y} too long for the configured FE')
+            raise VectorSizeMismatchError(f'Vector {y} too long for the configured FE')
         y = reduce_vector_mod(y, self.p)
         return inner_product_group_vector(msk, y)
 

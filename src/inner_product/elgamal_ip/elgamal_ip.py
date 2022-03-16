@@ -18,7 +18,7 @@ from charm.toolbox.integergroup import IntegerGroupQ, integer
 from typing import List, Dict, Tuple
 from src.helpers.additive_elgamal import AdditiveElGamal, ElGamalCipher
 from src.helpers.helpers import reduce_vector_mod, get_int
-from wrong_vector_size_error import WrongVectorSizeError
+from src.errors.vector_size_mismatch_error import VectorSizeMismatchError
 import charm
 import numpy as np
 
@@ -66,7 +66,7 @@ class ElGamalInnerProductFE:
             int: Functional key corresponding to vector y
         """
         if len(y) > len(msk):
-            raise WrongVectorSizeError(f'Vector {y} too long for the configured FE')
+            raise VectorSizeMismatchError(f'Vector {y} too long for the configured FE')
         y = reduce_vector_mod(y, self.elgamal_params['p'])
         key = 0
         for i in range(len(y)):
@@ -87,7 +87,7 @@ class ElGamalInnerProductFE:
             Dict[str, List[IntegerGroupElement]]: ciphertext corresponding to vector x
         """
         if len(x) > len(mpk):
-            raise WrongVectorSizeError(f'Vector {x} too long for the configured FE')
+            raise VectorSizeMismatchError(f'Vector {x} too long for the configured FE')
         r = self.elgamal_params['group'].random()
         ct_0 = mpk[0]['g'] ** r
         x = reduce_vector_mod(x, self.elgamal_params['p'])
