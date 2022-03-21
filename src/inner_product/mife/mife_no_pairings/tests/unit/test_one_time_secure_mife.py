@@ -13,7 +13,7 @@ class TestOneTimeSecureMIFE(unittest.TestCase):
         cls.mife = OneTimeSecureMIFE(ip_zl_func_family)
 
     def test_secret_key_gen(self):
-        key = self.mife.set_up(2)
+        key = self.mife.set_up_keys(2)
         self.assertIsInstance(key, list)
         self.assertEqual(len(key), self.mife.vector_len)
         self.assertEqual(len(key[0]), self.mife.inner_vector_len)

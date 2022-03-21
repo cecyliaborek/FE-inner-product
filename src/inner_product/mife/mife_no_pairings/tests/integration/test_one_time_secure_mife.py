@@ -12,7 +12,7 @@ class TestOneTimeSecureMIFE(unittest.TestCase):
         self.mife = OneTimeSecureMIFE(ip_zl_func_family)
 
     def test_final_result(self):
-        key = self.mife.set_up(2)
+        key = self.mife.set_up_keys(2)
         x = [[10, 20], [30, 4], [50, 60], [70, 80]]
         y = [[1, 2], [3, 4], [5, 6], [7, 8]]
         ciphertext = []

@@ -12,7 +12,7 @@ class OneTimeSecureMIFE:
         self.inner_vector_len = func_descr.m
         self.modulus = func_descr.L
 
-    def set_up(self, security_param: int) -> List[List[int]]:
+    def set_up_keys(self, security_param: int) -> List[List[int]]:
         key = [0] * self.vector_len
         for i in range(self.vector_len):
             key[i] = [get_random_from_Zl(self.modulus) for _ in range(self.inner_vector_len)]
