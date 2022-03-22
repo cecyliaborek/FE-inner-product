@@ -14,8 +14,108 @@ Abdalla, Michel et al. Multi-input functional encryption scheme without pairings
 :Authors:       Cecylia Borek
 :Date:          03/2022
 """
+from src.inner_product.elgamal_ip.elgamal_ip import ElGamalInnerProductFE
+from src.inner_product.mife.mife_no_pairings.function_families import MultiInputInnerProductZl
+from src.inner_product.mife.mife_no_pairings.one_time_secure_mife import OneTimeSecureMIFE
+
+
+class MSK:
+    def __init__(self, ot_mife_key, fe_msks):
+        self.ot_mife_key = ot_mife_key
+        self.fe_msks = fe_msks
+
+    @property
+    def ot_mife_key(self):
+        return self._ot_mife_key
+
+    @ot_mife_key.setter
+    def ot_mife_key(self, ot_mife_key):
+        # todo: check if instance of ots mife key
+        self._ot_mife_key = ot_mife_key
+
+    @property
+    def fe_msks(self):
+        return self._fe_msks
+
+    @fe_msks.setter
+    def fe_msks(self, fe_msks):
+        if type(fe_msks) != list:
+            raise ValueError("fe_msks should be a list of single-input fe's private keys")
+        self._fe_msks = fe_msks
+
+
+class MPK:
+    def __init__(self, fe_mpks: list):
+        if type(fe_mpks) != list:
+            assert False, "No list of single-input fe's public keys provided"
+        self.fe_mpks = fe_mpks
+
+    @property
+    def fe_mpks(self):
+        return self._fe_mpks
+
+    @fe_mpks.setter
+    def fe_mpks(self, fe_mpks):
+        if type(fe_mpks) != list:
+            raise ValueError("fe_mpks should be a list of single-input fe's public keys")
+        self._fe_mpks = fe_mpks
+
+
+class FunctionalKey:
+    def __init__(self, sk: list, z):
+        self.sk = sk
+        self.z = z
+
+    @property
+    def sk(self):
+        return self._sk
+
+    @sk.setter
+    def sk(self, sk):
+        if type(sk) != list:
+            raise ValueError("sk should be a list of single-input fe's functional keys")
+        self._sk = sk
+
+    @property
+    def z(self):
+        return self._z
+
+    @z.setter
+    def z(self, z):
+        # todo: check if instance of ot mife func key
+        self._z = z
+
 
 class MIFENoPairings:
 
-    def setUp(self, security_param, ):
-        pass
+    def __init__(self, func_descr: MultiInputInnerProductZl):
+        self.vector_len = func_descr.n
+        self.inner_vector_len = func_descr.m
+        self.modulus = func_descr.L
+        self.ot_mife = OneTimeSecureMIFE(func_descr)
+        self.single_input_fe = ElGamalInnerProductFE()
+
+    def set_up_keys(self, security_param: int) -> (MPK, MSK):
+        ot_mife_key = [self.ot_mife.set_up_keys(security_param) for _ in range(self.vector_len)]
+        fe_mpks = [None] * self.vector_len
+        fe_msks = [None] * self.vector_len
+        for i in range(self.vector_len):
+            fe_mpks[i], fe_msks[i] = self.single_input_fe.setUp(security_param, self.inner_vector_len)
+        msk = MSK(ot_mife_key, fe_msks)
+        mpk = MPK(fe_mpks)
+        return mpk, msk
+
+    def encrypt(self, msk: MSK, i, x_i):
+        w_i = self.ot_mife.encrypt(msk.ot_mife_key, i, x_i)
+        return self.single_input_fe.encrypt(msk.fe_msks[i], w_i)
+
+    def get_functional_key(self, msk: MSK, y):
+        sk = [self.single_input_fe.getFunctionalKey(msk.fe_msks[i], y[i]) for i in range(len(y))]
+        z = self.ot_mife.get_functional_key(msk.ot_mife_key, y)
+        return FunctionalKey(sk, z)
+
+    def decrypt(self, mpk: MPK, func_key: FunctionalKey, ciphertext, y):
+        d = []
+        for i in range(len(ciphertext)):
+            d.append(self.single_input_fe.decrypt(mpk.fe_mpks[i], ciphertext[i], func_key.sk[i], y))
+        return (sum(d) - func_key.z) % self.modulus
