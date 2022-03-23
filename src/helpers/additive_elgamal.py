@@ -94,5 +94,5 @@ class AdditiveElGamal(PKEnc):
         M = m % group.p
         if debug: print('m => %s' % m)
         if debug: print('dec M => %s' % M)
-        x = dummy_discrete_log(get_int(pk['g']), M, get_modulus(pk['g']), 200)
+        x = dummy_discrete_log(get_int(pk['g']), M, get_modulus(pk['g']), 2000)
         return x

@@ -14,6 +14,7 @@ Abdalla, Michel et al. Multi-input functional encryption scheme without pairings
 :Authors:       Cecylia Borek
 :Date:          03/2022
 """
+from src.errors.wrong_vector_for_provided_key import WrongVectorForProvidedKey
 from src.inner_product.elgamal_ip.elgamal_ip import ElGamalInnerProductFE
 from src.inner_product.mife.mife_no_pairings.function_families import MultiInputInnerProductZl
 from src.inner_product.mife.mife_no_pairings.one_time_secure_mife import OneTimeSecureMIFE
@@ -30,7 +31,7 @@ class MSK:
 
     @ot_mife_key.setter
     def ot_mife_key(self, ot_mife_key):
-        # todo: check if instance of ots mife key
+        # todo: check if instance of ot mife key
         self._ot_mife_key = ot_mife_key
 
     @property
@@ -96,7 +97,7 @@ class MIFENoPairings:
         self.single_input_fe = ElGamalInnerProductFE()
 
     def set_up_keys(self, security_param: int) -> (MPK, MSK):
-        ot_mife_key = [self.ot_mife.set_up_keys(security_param) for _ in range(self.vector_len)]
+        ot_mife_key = self.ot_mife.set_up_keys(security_param)
         fe_mpks = [None] * self.vector_len
         fe_msks = [None] * self.vector_len
         for i in range(self.vector_len):
@@ -105,11 +106,15 @@ class MIFENoPairings:
         mpk = MPK(fe_mpks)
         return mpk, msk
 
-    def encrypt(self, msk: MSK, i, x_i):
+    def encrypt(self, mpk: MPK, msk: MSK, i, x_i):
         w_i = self.ot_mife.encrypt(msk.ot_mife_key, i, x_i)
-        return self.single_input_fe.encrypt(msk.fe_msks[i], w_i)
+        return self.single_input_fe.encrypt(mpk.fe_mpks[i], w_i)
 
     def get_functional_key(self, msk: MSK, y):
+        if len(y) != len(msk.fe_msks):
+            raise WrongVectorForProvidedKey(
+                f"The length of the provided vector {y} doesn't match the length of the key list {msk.fe_msks}"
+            )
         sk = [self.single_input_fe.getFunctionalKey(msk.fe_msks[i], y[i]) for i in range(len(y))]
         z = self.ot_mife.get_functional_key(msk.ot_mife_key, y)
         return FunctionalKey(sk, z)
@@ -117,5 +122,5 @@ class MIFENoPairings:
     def decrypt(self, mpk: MPK, func_key: FunctionalKey, ciphertext, y):
         d = []
         for i in range(len(ciphertext)):
-            d.append(self.single_input_fe.decrypt(mpk.fe_mpks[i], ciphertext[i], func_key.sk[i], y))
+            d.append(self.single_input_fe.decrypt(mpk.fe_mpks[i], ciphertext[i], func_key.sk[i], y[i]))
         return (sum(d) - func_key.z) % self.modulus

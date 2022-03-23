@@ -79,10 +79,15 @@ def inner_product_modulo(a: List[int], b: List[int], mod: int) -> int:
 def inner_product(a: List[int], b: List[int]) -> int:
     if len(a) != len(b):
         raise VectorSizeMismatchError
-    inner = 0
-    for i in range(len(a)):
-        inner += a[i] * b[i]
-    return inner
+    n = len(a)
+    return sum([a[i] * b[i] for i in range(n)])
+
+
+def inner_product_vector_of_vectors(a: List[List[int]], b: List[List[int]]) -> int:
+    if len(a) != len(b):
+        raise VectorSizeMismatchError
+    n = len(a)
+    return sum([inner_product(a[i], b[i]) for i in range(n)])
 
 
 def decode_vector_from_group_elements(vector: List[IntegerGroupElement], group: IntegerGroup) -> List[int]:

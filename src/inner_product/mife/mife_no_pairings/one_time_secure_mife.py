@@ -24,7 +24,7 @@ class OneTimeSecureMIFE:
         try:
             return add_vectors_mod(key[i], x_i, self.modulus)
         except VectorSizeMismatchError:
-            raise WrongVectorForProvidedKey(f'Vector {x_i} too long for dimension {i} of the provided key')
+            raise WrongVectorForProvidedKey(f"Vector {x_i} doesn't match dimension {i} of the provided key: {key[i]}")
 
     def get_functional_key(self, key: List[List[int]], y: List[List[int]]) -> int:
         if len(key) != len(y):
