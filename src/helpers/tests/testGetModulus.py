@@ -1,6 +1,6 @@
 from charm.toolbox.integergroup import IntegerGroup
 
-from helpers.helpers import getModulus
+from src.helpers.helpers import get_modulus
 
 group = IntegerGroup()
 group.paramgen(1024)
@@ -11,7 +11,7 @@ print(g)
 print()
 
 
-mod = getModulus(g)
+mod = get_modulus(g)
 
 print(mod)
 print(type(mod))
