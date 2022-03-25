@@ -32,6 +32,22 @@ def add_vectors_mod(a: List[int], b: List[int], mod: int) -> List[int]:
     return out
 
 
+# def generate_group(sec_param):
+#     """Generates a Schnorr mod p where p is a prime of
+#     bit-size equal to sec_param
+#
+#     Args:
+#         sec_param (int): security parameter, bit-size of p
+#
+#     Returns:
+#         Tuple(): _description_
+#     """
+#     group = IntegerGroup()
+#     group.paramgen(sec_param)
+#     g = group.randomGen()
+#     return (group, g)
+
+
 def generate_group(sec_param):
     """Generates a Schnorr mod p where p is a prime of
     bit-size equal to sec_param
@@ -44,8 +60,11 @@ def generate_group(sec_param):
     """
     group = IntegerGroup()
     group.paramgen(sec_param)
-    g = group.randomGen()
-    return (group, g)
+    return group
+
+
+def get_random_generator(group):
+    return group.randomGen()
 
 
 def inner_product_group_vector(a: List[IntegerGroupElement], b: List[int]) -> int:

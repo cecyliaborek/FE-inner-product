@@ -18,7 +18,8 @@ import numpy as np
 import logging
 import charm
 
-from src.helpers.helpers import generate_group, get_modulus, reduce_vector_mod, inner_product_group_vector, get_int, dummy_discrete_log
+from src.helpers.helpers import generate_group, get_modulus, reduce_vector_mod, inner_product_group_vector, get_int, \
+    dummy_discrete_log, get_random_generator
 from src.errors.vector_size_mismatch_error import VectorSizeMismatchError
 
 IntegerGroupElement = charm.core.math.integer.integer
@@ -36,23 +37,24 @@ class DDH_PK():
         self.g = g
 
     def setUp(self, security_parameter: int, vector_length: int) -> Tuple[
-        List[IntegerGroupElement], List[IntegerGroupElement]]:
+            List[IntegerGroupElement], List[IntegerGroupElement]]:
         """Configures instance of DDH public key FE scheme.
-        Samples an intger Schnorr group of order p, where p is a prime number of
-        bitsize equal to security_parameter. The public parameters describing the
+        Samples an integer Schnorr group of order p, where p is a prime number of
+        bit-size equal to security_parameter. The public parameters describing the
         sampled group are saved as class instance members. Sets the supported message
         (vector) length to vector_length. Returns master public key and master secret 
         key as vectors of group elements.
 
         Args:
-            security_parameter (int): security parameter, bitsize of order of the sampled group 
+            security_parameter (int): security parameter, bit-size of order of the sampled group
             vector_length (int): supported vector length
 
         Returns:
             Tuple[List[IntegerGroupElement], List[IntegerGroupElement]]: (master public key,
                                                                             master secret key)
         """
-        (self.group, self.g) = generate_group(security_parameter)
+        self.group = generate_group(security_parameter)
+        self.g = get_random_generator(self.group)
         self.p = get_modulus(self.g)
         s = [self.group.random() for _ in range(vector_length)]
         h = [self.g ** s[i] for i in range(vector_length)]
