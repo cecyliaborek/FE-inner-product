@@ -15,7 +15,7 @@ Abdalla, Michel et al. Multi-input functional encryption scheme without pairings
 :Date:          03/2022
 """
 from src.errors.wrong_vector_for_provided_key import WrongVectorForProvidedKey
-from src.inner_product.elgamal_ip.elgamal_ip import ElGamalInnerProductFE
+from src.inner_product.single_input_fe.elgamal_ip.elgamal_ip import ElGamalInnerProductFE
 from src.inner_product.mife.mife_no_pairings.function_families import MultiInputInnerProductZl
 from src.inner_product.mife.mife_no_pairings.one_time_secure_mife import OneTimeSecureMIFE
 

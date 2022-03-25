@@ -1,6 +1,6 @@
 import numpy as np
 
-from src.inner_product.ddh_pk_ip.ddh_pk_ip import DDH_PK
+from src.inner_product.single_input_fe.ddh_pk_ip.ddh_pk_ip import DDH_PK
 
 
 def testFinResult():
