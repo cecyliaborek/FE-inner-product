@@ -1,17 +1,14 @@
 # FEPY
 
---- 
 Implementation of some existing functional encryption schemes supporting the inner product functionality.
 
 ## Schemes
 
----
 Currently implemented schemes:
 
 
 ## Installation
 
----
 This library uses [Charm](https://github.com/JHUISI/charm) - a framework for rapidly prototyping cryptosystems. To install Charm, first verify that you have installed the following dependencies:
 
 - [GMP 5.x](https://gmplib.org/)
