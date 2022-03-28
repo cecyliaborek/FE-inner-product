@@ -36,7 +36,7 @@ class DDH_PK():
         self.group = group
         self.g = g
 
-    def setUp(self, security_parameter: int, vector_length: int) -> Tuple[
+    def set_up(self, security_parameter: int, vector_length: int) -> Tuple[
             List[IntegerGroupElement], List[IntegerGroupElement]]:
         """Configures instance of DDH public key FE scheme.
         Samples an integer Schnorr group of order p, where p is a prime number of
@@ -84,7 +84,7 @@ class DDH_PK():
         ciphertext = {'ct0': ct_0, 'ct': ct}
         return ciphertext
 
-    def getFunctionalKey(self, msk: List[IntegerGroupElement], y: List[int]) -> int:
+    def get_functional_key(self, msk: List[IntegerGroupElement], y: List[int]) -> int:
         """Derives functional key for calculating inner product with vector y
 
         Args:

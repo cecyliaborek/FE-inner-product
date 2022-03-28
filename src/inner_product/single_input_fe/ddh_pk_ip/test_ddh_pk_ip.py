@@ -10,13 +10,13 @@ def testFinResult():
     y = [1, 2, 1, 2, 1]
     n = len(x)
 
-    mpk, msk = fe.setUp(1024, n)
+    mpk, msk = fe.set_up(1024, n)
     print('msk', type(msk))
     ciphertext = fe.encrypt(mpk, x)
     print('ciphertext', type(ciphertext['ct0']))
     print(ciphertext['ct0'])
 
-    func_key = fe.getFunctionalKey(msk, y)
+    func_key = fe.get_functional_key(msk, y)
 
     final_result = fe.decrypt(mpk, ciphertext, func_key, y)
     expected = np.inner(x, y)

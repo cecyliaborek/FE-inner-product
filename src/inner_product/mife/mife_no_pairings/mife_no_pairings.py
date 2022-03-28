@@ -7,7 +7,7 @@ Abdalla, Michel et al. Multi-input functional encryption scheme without pairings
 | Published in: Advances in Cryptology – CRYPTO 2018. Cham: Springer International Publishing, 2018. 597–627. Web.
 | DOI:          10.1007/978-3-319-96884-1_20
 
-* type:         multi-input functional encryption
+* type:         private key multi-input functional encryption
 * setting:
 * assumption:
 
