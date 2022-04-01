@@ -1,6 +1,8 @@
-# FEPY
+# PyFE
 
-Implementation of some existing functional encryption schemes supporting the inner product functionality.
+Python implementation of some existing functional encryption schemes supporting the inner product functionality.
+
+**NOTE:** This implementation is only meant for educational and research purposes.
 
 ## Schemes
 
