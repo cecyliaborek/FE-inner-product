@@ -1,6 +1,6 @@
 import numpy as np
 
-from src.inner_product.single_input_fe.fully_secure_fe.fully_secure_fe import FullySecureFE
+from src.inner_product.single_input_fe.fully_secure_fe.fully_secure_fe_ddh import FullySecureFE
 
 
 def test_fin_result():

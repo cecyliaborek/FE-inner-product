@@ -10,7 +10,7 @@ Agrawal et al. Fully secure functional encryption scheme from standard assumptio
 
 * type:         functional encryption
 * setting:
-* assumption:
+* assumption:   DDH
 
 :Authors:       Cecylia Borek
 :Date:          03/2022
