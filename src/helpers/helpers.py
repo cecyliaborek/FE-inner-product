@@ -3,6 +3,7 @@ import charm
 from typing import List
 from charm.core.math.integer import getMod, toInt
 from random import SystemRandom
+import numpy as np
 
 from src.errors.vector_size_mismatch_error import VectorSizeMismatchError
 
@@ -22,13 +23,24 @@ def get_random_from_Zl(l: int) -> int:
     return cryptogen.randrange(l)
 
 
+def sample_random_matrix_mod(size: tuple, mod: int) -> np.ndarray:
+    return np.random.randint(mod, size=size)
+
+
+def multiply_matrices_mod(A: np.ndarray, B: np.ndarray, mod: int) -> np.ndarray:
+    return np.mod(np.dot(A, B), mod)
+
+
+def sample_random_matrix_from_normal_dist(size: tuple, standard_dev):
+    rng = np.random.default_rng()
+    return rng.normal(loc=0, scale=standard_dev, size=size)
+
+
 def add_vectors_mod(a: List[int], b: List[int], mod: int) -> List[int]:
     if len(a) != len(b):
         raise VectorSizeMismatchError
     n = len(a)
-    out = [None] * n
-    for i in range(n):
-        out[i] = (a[i] + b[i]) % mod
+    out = [(a[i] + b[i]) % mod for i in range(n)]
     return out
 
 
