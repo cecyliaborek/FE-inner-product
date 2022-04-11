@@ -8,6 +8,8 @@ import numpy as np
 from src.errors.vector_size_mismatch_error import VectorSizeMismatchError
 
 IntegerGroupElement = charm.core.math.integer.integer
+IntegerMatrix = List[List[int]]
+
 
 
 def get_random_from_Zl(l: int) -> int:
@@ -23,12 +25,26 @@ def get_random_from_Zl(l: int) -> int:
     return cryptogen.randrange(l)
 
 
-def sample_random_matrix_mod(size: tuple, mod: int) -> np.ndarray:
-    return np.random.randint(mod, size=size)
+def sample_random_matrix_mod_np(size: tuple, mod: int) -> np.ndarray:
+    return np.random.randint(mod, size=size, dtype=np.longlong)
 
 
-def multiply_matrices_mod(A: np.ndarray, B: np.ndarray, mod: int) -> np.ndarray:
+def sample_random_matrix_mod(m: int, n: int, mod: int) -> IntegerMatrix:
+    matrix = []
+    for i in range(m):
+        row = []
+        for j in range(n):
+            row.append(get_random_from_Zl(mod))
+        matrix.append(row)
+    return matrix
+
+
+def multiply_matrices_mod_np(A: np.ndarray, B: np.ndarray, mod: int) -> np.ndarray:
     return np.mod(np.dot(A, B), mod)
+
+
+def multiply_matrices_mod(A: IntegerMatrix, B: IntegerMatrix, mod: int) -> IntegerMatrix:
+    result = []
 
 
 def multiply_matrices(a: np.ndarray, b: np.ndarray) -> np.ndarray:
