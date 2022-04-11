@@ -31,6 +31,10 @@ def multiply_matrices_mod(A: np.ndarray, B: np.ndarray, mod: int) -> np.ndarray:
     return np.mod(np.dot(A, B), mod)
 
 
+def multiply_matrices(a: np.ndarray, b: np.ndarray) -> np.ndarray:
+    return np.dot(a, b)
+
+
 def sample_random_matrix_from_normal_dist(size: tuple, standard_dev):
     rng = np.random.default_rng()
     return rng.normal(loc=0, scale=standard_dev, size=size)
