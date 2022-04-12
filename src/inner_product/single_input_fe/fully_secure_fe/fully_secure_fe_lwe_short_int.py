@@ -23,33 +23,34 @@ from typing import List
 import numpy as np
 from charm.core.math.integer import randomPrime
 
-from src.helpers.helpers import sample_random_matrix_mod, multiply_matrices_mod, sample_random_matrix_from_normal_dist, \
+from src.helpers.helpers import sample_random_matrix_mod, sample_random_matrix_from_normal_dist, \
     inner_product_modulo
+from src.helpers.matrix import Matrix
 
 debug = True
 
 
 def set_up(n: int, vectors_len: int, message_bound: int, vector_bound: int):
     ip_bound = vectors_len * message_bound * vector_bound
-    if debug: print(ip_bound)
+    if debug: print("ip bound: ", ip_bound)
     ip_bound_bitsize = math.floor(math.log(ip_bound, 2)) + 1
     if debug: print((ip_bound_bitsize))
     q = int(randomPrime(64, 1))
-    if debug: print(q)
+    if debug: print("q: ", q)
     m_constraints = n * math.log(q, 2)
     m = np.random.randint(2 * m_constraints, 4 * m_constraints)
-    if debug: print(m)
+    if debug: print("m: ", m)
     alpha = random.random()
     A = sample_random_matrix_mod((m, n), q)
     Z = sample_random_matrix_mod((vectors_len, m), q)
-    U = multiply_matrices_mod(A, Z, q)
+    U = A.multipy_modulo(Z, q)
     mpk = {'A': A, 'U': U, 'K': ip_bound, 'P': message_bound, 'V': vector_bound, 'q': q, 'alpha': alpha}
     msk = Z
     return mpk, msk
 
 
-def get_functional_key(msk: np.ndarray, y: List[int]):
-    return np.dot(np.array(y), msk)
+def get_functional_key(msk: Matrix, y: List[int]):
+    return msk @ Matrix.from_list(y)
 
 
 def encrypt(mpk: dict, x: List[int]) -> dict:

@@ -6,10 +6,10 @@ from random import SystemRandom
 import numpy as np
 
 from src.errors.vector_size_mismatch_error import VectorSizeMismatchError
+from src.helpers.matrix import Matrix
 
 IntegerGroupElement = charm.core.math.integer.integer
 IntegerMatrix = List[List[int]]
-
 
 
 def get_random_from_Zl(l: int) -> int:
@@ -29,13 +29,11 @@ def sample_random_matrix_mod_np(size: tuple, mod: int) -> np.ndarray:
     return np.random.randint(mod, size=size, dtype=np.longlong)
 
 
-def sample_random_matrix_mod(m: int, n: int, mod: int) -> IntegerMatrix:
-    matrix = []
-    for i in range(m):
-        row = []
-        for j in range(n):
-            row.append(get_random_from_Zl(mod))
-        matrix.append(row)
+def sample_random_matrix_mod(size: tuple, mod: int) -> Matrix:
+    matrix = Matrix(dims=size)
+    for i in range(size[0]):
+        for j in range(size[1]):
+            matrix[i, j] = get_random_from_Zl(mod)
     return matrix
 
 
@@ -43,11 +41,7 @@ def multiply_matrices_mod_np(A: np.ndarray, B: np.ndarray, mod: int) -> np.ndarr
     return np.mod(np.dot(A, B), mod)
 
 
-def multiply_matrices_mod(A: IntegerMatrix, B: IntegerMatrix, mod: int) -> IntegerMatrix:
-    result = []
-
-
-def multiply_matrices(a: np.ndarray, b: np.ndarray) -> np.ndarray:
+def multiply_matrices_np(a: np.ndarray, b: np.ndarray) -> np.ndarray:
     return np.dot(a, b)
 
 
