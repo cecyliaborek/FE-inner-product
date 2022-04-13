@@ -47,7 +47,7 @@ def multiply_matrices_np(a: np.ndarray, b: np.ndarray) -> np.ndarray:
 
 def sample_random_matrix_from_normal_dist(size: tuple, standard_dev):
     rng = np.random.default_rng()
-    return rng.normal(loc=0, scale=standard_dev, size=size)
+    return np.round(rng.normal(loc=0, scale=standard_dev, size=size))
 
 
 def add_vectors_mod(a: List[int], b: List[int], mod: int) -> List[int]:

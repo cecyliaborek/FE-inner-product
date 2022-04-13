@@ -18,7 +18,7 @@ Agrawal et al. Fully secure functional encryption scheme for inner product of sh
 """
 import math
 import random
-from typing import List
+from typing import List, Dict
 
 import numpy as np
 from charm.core.math.integer import randomPrime
@@ -34,7 +34,7 @@ def set_up(n: int, vectors_len: int, message_bound: int, vector_bound: int):
     ip_bound = vectors_len * message_bound * vector_bound
     if debug: print("ip bound: ", ip_bound)
     ip_bound_bitsize = math.floor(math.log(ip_bound, 2)) + 1
-    if debug: print((ip_bound_bitsize))
+    if debug: print("ip bound bitsize: ", ip_bound_bitsize)
     q = int(randomPrime(64, 1))
     if debug: print("q: ", q)
     m_constraints = n * math.log(q, 2)
@@ -43,30 +43,30 @@ def set_up(n: int, vectors_len: int, message_bound: int, vector_bound: int):
     alpha = random.random()
     A = sample_random_matrix_mod((m, n), q)
     Z = sample_random_matrix_mod((vectors_len, m), q)
-    U = A.multipy_modulo(Z, q)
+    U = A.multiply_modulo(Z, q)
     mpk = {'A': A, 'U': U, 'K': ip_bound, 'P': message_bound, 'V': vector_bound, 'q': q, 'alpha': alpha}
     msk = Z
     return mpk, msk
 
 
 def get_functional_key(msk: Matrix, y: List[int]):
-    return msk @ Matrix.from_list(y)
+    return Matrix.from_list(y) @ msk
 
 
 def encrypt(mpk: dict, x: List[int]) -> dict:
     A = mpk['A']
     U = mpk['U']
     K = mpk['K']
-    m, n = A.shape
-    l = U.shape[0]
+    m, n = A.size()
+    l = U.size()[0]
     alpha = mpk['alpha']
     q = mpk['q']
-    s = sample_random_matrix_mod((n,), q)
-    x = np.array(x)
-    err0 = sample_random_matrix_from_normal_dist((m,), alpha * q)
-    err1 = sample_random_matrix_from_normal_dist((l,), alpha * q)
-    c0 = np.mod((multiply_matrices_mod(A, s, q) + err0), q)
-    c1 = np.mod((multiply_matrices_mod(U, s, q) + err1 + math.floor(q / K) * x), q)
+    s = sample_random_matrix_mod((1, n), q)
+    x = Matrix.from_list(x)
+    err0 = sample_random_matrix_from_normal_dist((1, m), alpha * q)
+    err1 = sample_random_matrix_from_normal_dist((1, l), alpha * q)
+    c0 = (A.multiply_modulo(s.transpose(), q) + err0.transpose()) % q
+    c1 = (U.multiply_modulo(s.transpose(), q) + err1.transpose() + math.floor(q / K) * x.transpose()) % q
     return {'c0': c0, 'c1': c1}
 
 

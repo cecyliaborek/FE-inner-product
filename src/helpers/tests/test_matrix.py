@@ -27,6 +27,10 @@ class TestMatrix(unittest.TestCase):
         self.assertEqual(matrix[0, 3], 4)
         print(matrix)
 
+    def test_transpose(self):
+        a = Matrix.from_list([[1, 2], [3, 4], [5, 6]])
+        self.assertEqual(a.transpose(), Matrix.from_list([[1, 3, 5], [2, 4, 6]]))
+
 
 if __name__ == '__main__':
     unittest.main()

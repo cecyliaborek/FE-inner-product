@@ -68,7 +68,9 @@ class Matrix:
         result = None
         if isinstance(other, Matrix):
             if other.rows != self.cols:
-                raise IncompatibleMatrixDimensionsException
+                raise IncompatibleMatrixDimensionsException(f"The number of rows in the other matrix different than "
+                                                            f"the number of columns in this matrix: {other.rows} != "
+                                                            f"{self.cols}")
             result = Matrix((self.rows, other.cols), fill=0)
             for i in range(self.rows):
                 for j in range(other.cols):
@@ -130,14 +132,27 @@ class Matrix:
             j = key[1]
             return self.values[i][j]
 
+    def __eq__(self, other):
+        if not isinstance(other, Matrix):
+            return False
+        if self.rows == other.rows and self.cols == other.cols:
+            for i in range(self.rows):
+                for j in range(self.cols):
+                    if self.values[i][j] != other.values[i][j]:
+                        return False
+            return True
+        return False
+
     def size(self):
         return self.rows, self.cols
 
-    def multipy_modulo(self, other, mod):
+    def multiply_modulo(self, other, mod):
         result = None
         if isinstance(other, Matrix):
-            if other.rows != self.cols:
-                raise IncompatibleMatrixDimensionsException
+            if self.cols != other.rows:
+                raise IncompatibleMatrixDimensionsException(f"The number of rows in the other matrix different than "
+                                                            f"the number of columns in this matrix: {other.rows} != "
+                                                            f"{self.cols}")
             result = Matrix((self.rows, other.cols), fill=0)
             for i in range(self.rows):
                 for j in range(other.cols):
@@ -146,4 +161,11 @@ class Matrix:
                         acc += (self.values[i][k] * other.values[k][j]) % mod
                     result.values[i][j] = acc
         return result
+
+    def transpose(self):
+        transposed = Matrix((self.cols, self.rows))
+        for i in range(self.rows):
+            for j in range(self.cols):
+                transposed.values[j][i] = self.values[i][j]
+        return transposed
 
