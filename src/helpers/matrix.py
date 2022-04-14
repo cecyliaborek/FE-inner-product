@@ -169,3 +169,12 @@ class Matrix:
                 transposed.values[j][i] = self.values[i][j]
         return transposed
 
+    def to_list(self) -> list:
+        matrix_as_list = []
+        for i in range(self.rows):
+            row = []
+            for j in range(self.cols):
+                row.append(self.values[i][j])
+            matrix_as_list.append(row)
+        return matrix_as_list
+
