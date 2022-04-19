@@ -1,6 +1,6 @@
 """
 Agrawal et al. Fully secure functional encryption scheme for inner product of short integer vectors, under the LWE
-    assupmtion
+    assumption
 
 
 | From:         Agrawal, Shweta, Benoît Libert, and Damien Stehlé. “Fully Secure Functional Encryption for Inner
