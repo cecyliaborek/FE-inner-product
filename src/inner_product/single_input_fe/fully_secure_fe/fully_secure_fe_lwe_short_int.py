@@ -33,10 +33,10 @@ debug = True
 
 
 def set_up(n: int, vectors_len: int, message_bound: int, vector_bound: int):
-    ip_bound = vectors_len * message_bound * vector_bound
+    ip_bound = vectors_len * message_bound * vector_bound  # K in the paper
     if debug: print("ip bound: ", ip_bound)
-    ip_bound_bitsize = math.floor(math.log(ip_bound, 2)) + 1
-    if debug: print("ip bound bitsize: ", ip_bound_bitsize)
+    # ip_bound_bitsize = math.floor(math.log(ip_bound, 2)) + 1
+    # if debug: print("ip bound bitsize: ", ip_bound_bitsize)
     q = int(randomPrime(1024, 1))
     if debug: print("q: ", q)
     m_constraints = n * math.log(q, 2)
@@ -77,8 +77,12 @@ def encrypt(mpk: dict, x: List[int]) -> Ciphertext:
 
 def decrypt(mpk: dict, y: List[int], func_key: Matrix, ciphertext: Ciphertext) -> int:
     q = mpk['q']
+    ip_bound = mpk['K']
     c0 = ciphertext['c0'].to_list()[0]
     c1 = ciphertext['c1'].to_list()[0]
     ip_approx = (inner_product_modulo(y, c1, q) - inner_product_modulo(func_key.to_list()[0], c0, q)) % q
-    ip = ip_approx
+    ip_possible_values = [k for k in range(-1 * ip_bound+1, ip_bound, 1)]
+    f = ([abs((q/ip_bound) * k - ip_approx) for k in ip_possible_values])
+    min_index = min(range(len(f)), key=f.__getitem__)
+    ip = ip_possible_values[min_index]
     return ip

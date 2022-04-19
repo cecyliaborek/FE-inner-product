@@ -1,7 +1,6 @@
 import unittest
 import src.inner_product.single_input_fe.fully_secure_fe.fully_secure_fe_lwe_short_int
 from src.helpers.matrix import Matrix
-import numpy as np
 
 
 class TestFullySecureFeLWEShortInt(unittest.TestCase):
@@ -45,6 +44,7 @@ class TestFullySecureFeLWEShortInt(unittest.TestCase):
 
         decrypted = self.fe.decrypt(mpk, y, func_key, c)
         self.assertIsInstance(decrypted, int)
+        print(decrypted)
 
 
 if __name__ == '__main__':
