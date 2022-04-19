@@ -1,5 +1,6 @@
 """
-Abdalla, Michel et al. Multi-input functional encryption scheme without pairings
+Abdalla, Michel et al. Multi-input functional encryption schemes without pairings for inner product over integers
+    modulo L and for the case of bounded-norm inner product.
 
 
 | From:         Abdalla, Michel et al. “Multi-Input Functional Encryption for Inner Products: Function-Hiding
@@ -16,7 +17,8 @@ Abdalla, Michel et al. Multi-input functional encryption scheme without pairings
 """
 from src.errors.wrong_vector_for_provided_key import WrongVectorForProvidedKey
 from src.inner_product.single_input_fe.elgamal_ip.elgamal_ip import ElGamalInnerProductFE
-from src.inner_product.mife.mife_no_pairings.function_families import MultiInputInnerProductZl
+from src.inner_product.mife.mife_no_pairings.function_families import MultiInputInnerProductZl, \
+    MultiInputBoundedNormInnerProductZ
 from src.inner_product.mife.mife_no_pairings.one_time_secure_mife import OneTimeSecureMIFE
 
 
@@ -87,7 +89,7 @@ class FunctionalKey:
         self._z = z
 
 
-class MIFENoPairings:
+class MIFENoPairingsModuloL:
 
     def __init__(self, func_descr: MultiInputInnerProductZl):
         self.vector_len = func_descr.n
@@ -124,3 +126,11 @@ class MIFENoPairings:
         for i in range(len(ciphertext)):
             d.append(self.single_input_fe.decrypt(mpk.fe_mpks[i], ciphertext[i], func_key.sk[i], y[i]))
         return (sum(d) - func_key.z) % self.modulus
+
+
+class MIFENoPairingsBoundedNorm:
+
+    def __init__(self, func_descr: MultiInputBoundedNormInnerProductZ) -> None:
+        self.vector_len = func_descr.n
+        self.inner_vector_len = func_descr.m
+        self.ot_mife = OneTimeSecureMIFE(func_descr)

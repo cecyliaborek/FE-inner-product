@@ -3,13 +3,13 @@ import unittest
 from src.errors.wrong_vector_for_provided_key import WrongVectorForProvidedKey
 from src.inner_product.single_input_fe.elgamal_ip.elgamal_ip import ElGamalInnerProductCipher
 from src.inner_product.mife.mife_no_pairings.function_families import MultiInputInnerProductZl
-from src.inner_product.mife.mife_no_pairings.mife_no_pairings import MIFENoPairings, MPK, MSK, FunctionalKey
+from src.inner_product.mife.mife_no_pairings.mife_no_pairings import MIFENoPairingsModuloL, MPK, MSK, FunctionalKey
 
 
 class TestMIFENoPairings(unittest.TestCase):
     def setUp(self) -> None:
         ip_zl_func_family = MultiInputInnerProductZl(60, 2, 4)
-        self.mife = MIFENoPairings(ip_zl_func_family)
+        self.mife = MIFENoPairingsModuloL(ip_zl_func_family)
 
     def test_set_up_keys(self):
         mpk, msk = self.mife.set_up_keys(1024)

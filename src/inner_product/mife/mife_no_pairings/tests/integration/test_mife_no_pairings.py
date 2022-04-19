@@ -1,14 +1,14 @@
 import unittest
 
-from src.helpers.helpers import inner_product_vector_of_vectors
+from src.helpers.helpers import inner_product_matrices
 from src.inner_product.mife.mife_no_pairings.function_families import MultiInputInnerProductZl
-from src.inner_product.mife.mife_no_pairings.mife_no_pairings import MIFENoPairings
+from src.inner_product.mife.mife_no_pairings.mife_no_pairings import MIFENoPairingsModuloL
 
 
 class TestMIFENoPairings(unittest.TestCase):
     def setUp(self) -> None:
         ip_zl_func_descr = MultiInputInnerProductZl(60, 2, 4)
-        self.mife = MIFENoPairings(ip_zl_func_descr)
+        self.mife = MIFENoPairingsModuloL(ip_zl_func_descr)
         self.mpk, self.msk = self.mife.set_up_keys(1024)
 
     def test_final_result(self):
@@ -22,7 +22,7 @@ class TestMIFENoPairings(unittest.TestCase):
         func_key = self.mife.get_functional_key(self.msk, y)
 
         result_inner_prod = self.mife.decrypt(self.mpk, func_key, ciphertexts, y)
-        expected_inner_prod = inner_product_vector_of_vectors(x, y) % self.mife.modulus
+        expected_inner_prod = inner_product_matrices(x, y) % self.mife.modulus
         self.assertEqual(expected_inner_prod, result_inner_prod,
                          f'Expected = {expected_inner_prod}, obtained = {result_inner_prod}')
 

@@ -6,8 +6,10 @@ from random import SystemRandom
 import numpy as np
 
 from src.errors.vector_size_mismatch_error import VectorSizeMismatchError
+from src.helpers.matrix import Matrix
 
 IntegerGroupElement = charm.core.math.integer.integer
+IntegerMatrix = List[List[int]]
 
 
 def get_random_from_Zl(l: int) -> int:
@@ -23,17 +25,29 @@ def get_random_from_Zl(l: int) -> int:
     return cryptogen.randrange(l)
 
 
-def sample_random_matrix_mod(size: tuple, mod: int) -> np.ndarray:
-    return np.random.randint(mod, size=size)
+def sample_random_matrix_mod_np(size: tuple, mod: int) -> np.ndarray:
+    return np.random.randint(mod, size=size, dtype=np.longlong)
 
 
-def multiply_matrices_mod(A: np.ndarray, B: np.ndarray, mod: int) -> np.ndarray:
+def sample_random_matrix_mod(size: tuple, mod: int) -> Matrix:
+    matrix = Matrix(dims=size)
+    for i in range(size[0]):
+        for j in range(size[1]):
+            matrix[i, j] = get_random_from_Zl(mod)
+    return matrix
+
+
+def multiply_matrices_mod_np(A: np.ndarray, B: np.ndarray, mod: int) -> np.ndarray:
     return np.mod(np.dot(A, B), mod)
+
+
+def multiply_matrices_np(a: np.ndarray, b: np.ndarray) -> np.ndarray:
+    return np.dot(a, b)
 
 
 def sample_random_matrix_from_normal_dist(size: tuple, standard_dev):
     rng = np.random.default_rng()
-    return rng.normal(loc=0, scale=standard_dev, size=size)
+    return np.round(rng.normal(loc=0, scale=standard_dev, size=size))
 
 
 def add_vectors_mod(a: List[int], b: List[int], mod: int) -> List[int]:
@@ -114,11 +128,18 @@ def inner_product(a: List[int], b: List[int]) -> int:
     return sum([a[i] * b[i] for i in range(n)])
 
 
-def inner_product_vector_of_vectors(a: List[List[int]], b: List[List[int]]) -> int:
+def inner_product_matrices(a: List[List[int]], b: List[List[int]]) -> int:
     if len(a) != len(b):
         raise VectorSizeMismatchError
     n = len(a)
     return sum([inner_product(a[i], b[i]) for i in range(n)])
+
+
+def inner_product_matrices_mod(a: List[List[int]], b: List[List[int]], mod: int) -> int:
+    if len(a) != len(b):
+        raise VectorSizeMismatchError
+    n = len(a)
+    return sum([inner_product_modulo(a[i], b[i]) for i in range(n)])
 
 
 def decode_vector_from_group_elements(vector: List[IntegerGroupElement], group: IntegerGroup) -> List[int]:
