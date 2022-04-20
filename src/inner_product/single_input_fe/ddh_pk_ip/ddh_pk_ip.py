@@ -15,7 +15,6 @@ Michel Abdalla et al. DDH based simple functional encryption inner product schem
 """
 from typing import Dict, List, Tuple
 import numpy as np
-import logging
 import charm
 
 from src.helpers.helpers import generate_group, get_modulus, reduce_vector_mod, inner_product_group_vector, get_int, \
@@ -24,20 +23,25 @@ from src.errors.vector_size_mismatch_error import VectorSizeMismatchError
 
 IntegerGroupElement = charm.core.math.integer.integer
 
-logger = logging.getLogger(__name__)
-FORMAT = "[%(filename)s: %(funcName)17s() ] %(message)s"
-logging.basicConfig(format=FORMAT)
-logger.setLevel(logging.DEBUG)
 
+class PublicKeyDDHFe:
 
-class DDH_PK():
-
-    def __init__(self, group=None, g=None) -> None:
+    def __init__(self, group=None, g=None, p=None) -> None:
         self.group = group
         self.g = g
+        self.p = p
 
-    def set_up(self, security_parameter: int, vector_length: int) -> Tuple[
-            List[IntegerGroupElement], List[IntegerGroupElement]]:
+    def get_public_params(self) -> dict:
+        """
+        Returns public parameters allowing for instantiation of compatible instance of FE elsewhere.
+        Returns:
+            dict: dictionary containing public parameters of the scheme
+
+        """
+        return {'group': self.group, 'g': self.g, 'p': self.p}
+
+    def set_up(self, security_parameter: int, vector_length: int) -> \
+            (List[IntegerGroupElement], List[IntegerGroupElement]):
         """Configures instance of DDH public key FE scheme.
         Samples an integer Schnorr group of order p, where p is a prime number of
         bit-size equal to security_parameter. The public parameters describing the
@@ -50,8 +54,8 @@ class DDH_PK():
             vector_length (int): supported vector length
 
         Returns:
-            Tuple[List[IntegerGroupElement], List[IntegerGroupElement]]: (master public key,
-                                                                            master secret key)
+            Tuple[List[IntegerGroupElement], List[IntegerGroupElement]]: master public key,
+                                                                            master secret key
         """
         self.group = generate_group(security_parameter)
         self.g = get_random_generator(self.group)
@@ -60,7 +64,7 @@ class DDH_PK():
         h = [self.g ** s[i] for i in range(vector_length)]
         mpk = h
         msk = s
-        return (mpk, msk)
+        return mpk, msk
 
     def encrypt(self, mpk: List[IntegerGroupElement], x: List[int]) -> Dict[str, List[IntegerGroupElement]]:
         """Encrypts integer vector x
@@ -102,14 +106,15 @@ class DDH_PK():
         y = reduce_vector_mod(y, self.p)
         return inner_product_group_vector(msk, y)
 
-    def decrypt(self, mpk, ciphertext: Dict[str, IntegerGroupElement], sk_y: int, y: List[int]) -> int:
-        """Returns inner product of vector y and vector x encrypted in ciphertext
+    def decrypt(self, mpk, ciphertext: Dict[str, IntegerGroupElement], sk_y: int, y: List[int], limit: int) -> int:
+        """Returns inner product of vector y and vector x encrypted in ciphertext if it lies within the provided limit
 
         Args:
             mpk (_type_): _description_
             ciphertext (List[]): _description_
             sk_y (int): functional decryption key for vector y
             y (List[y]): vector y
+            limit (int): the upper bound for the inner product result
 
         Returns:
             int: inner product of x and y or None if the inner product was not found
@@ -125,5 +130,5 @@ class DDH_PK():
         pi = get_int(intermediate)
         g = get_int(self.g)
 
-        inner_prod = dummy_discrete_log(g, pi, self.p, 200)
+        inner_prod = dummy_discrete_log(g, pi, self.p, limit)
         return inner_prod
