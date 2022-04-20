@@ -1,6 +1,6 @@
 class MultiInputInnerProductZl:
 
-    def __init__(self, L, m, n):
+    def __init__(self, L, n, m):
         self.L = L
         self.m = m
         self.n = n
