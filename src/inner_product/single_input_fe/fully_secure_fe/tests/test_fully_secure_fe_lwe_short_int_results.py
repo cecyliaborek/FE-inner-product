@@ -1,10 +1,11 @@
 import numpy as np
-import src.inner_product.single_input_fe.fully_secure_fe.fully_secure_fe_lwe_short_int
-
-fe = src.inner_product.single_input_fe.fully_secure_fe.fully_secure_fe_lwe_short_int
+from src.inner_product.single_input_fe.fully_secure_fe.fully_secure_fe_lwe_short_int import FullySecureFeLweShortInt
 
 
 def test_final_result():
+
+    fe = FullySecureFeLweShortInt()
+
     x = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
     y = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
