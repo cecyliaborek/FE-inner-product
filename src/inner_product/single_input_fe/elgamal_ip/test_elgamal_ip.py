@@ -14,7 +14,7 @@ class TestElGamalInnerProduct(unittest.TestCase):
         x = [1, 2, 3, 4]
         key_y = fe.get_functional_key(sk, y)
         c_x = fe.encrypt(pk, x)
-        obtained_inner_prod = fe.decrypt(pk, c_x, key_y, y)
+        obtained_inner_prod = fe.decrypt(pk, c_x, key_y, y, 2000)
         expected_inner_prod = np.inner(x, y)
 
         try:

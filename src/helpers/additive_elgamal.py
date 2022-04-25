@@ -78,7 +78,7 @@ class AdditiveElGamal(PKEnc):
             print('x => %s' % x)
         pk = {'g': self.g, 'h': h}
         sk = {'x': x}
-        return (pk, sk)
+        return pk, sk
 
     def encrypt(self, pk, x, r):
         c1 = pk['g'] ** r
@@ -88,11 +88,11 @@ class AdditiveElGamal(PKEnc):
         c2 = m * s
         return ElGamalCipher({'c1': c1, 'c2': c2})
 
-    def decrypt(self, pk, sk, c):
+    def decrypt(self, pk, sk, c, limit):
         s = c['c1'] ** sk['x']
         m = c['c2'] * (s ** -1)
         M = m % group.p
         if debug: print('m => %s' % m)
         if debug: print('dec M => %s' % M)
-        x = dummy_discrete_log(get_int(pk['g']), M, get_modulus(pk['g']), 2000)
+        x = dummy_discrete_log(get_int(pk['g']), M, get_modulus(pk['g']), limit)
         return x

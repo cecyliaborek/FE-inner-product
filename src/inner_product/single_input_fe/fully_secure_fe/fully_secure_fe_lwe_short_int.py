@@ -58,8 +58,9 @@ class FullySecureFeLweShortInt:
 
     def set_up(self, n: int, vectors_len: int, message_bound: int, vector_bound: int):
         """
-        Sets ups parameters needed for proper functioning of the scheme. After calling, the get_params function may be
-        called to obtain parameters needed for initializing a compatible instance of the scheme.
+        Sets ups parameters needed for proper functioning of the scheme and generates master public and secret keys.
+        After calling, the get_params function may be called to obtain parameters needed for initializing a compatible
+        instance of the scheme.
         Args:
             n:
             vectors_len: length of the vectors to encrypt and get functional key for

@@ -45,6 +45,15 @@ class ElGamalInnerProductFE:
     elgamal_params = {"group": elgamal_group, "p": int(p)}
 
     def set_up(self, security_parameter: int, vector_length: int) -> Tuple[List[ElGamalKey], List[ElGamalKey]]:
+        """
+        Generates master public and secret key
+        Args:
+            security_parameter: security parameter for generating underlying Elgamal's keys
+            vector_length: supported length of vectors
+
+        Returns:
+            Tuple[List[ElGamalKey], List[ElGamalKey]]: master public key and master secret key
+        """
 
         master_public_key = [None] * vector_length
         master_secret_key = [None] * vector_length
@@ -95,7 +104,12 @@ class ElGamalInnerProductFE:
         ciphertext = ElGamalInnerProductCipher({'ct0': ct_0, 'ct': ct})
         return ciphertext
 
-    def decrypt(self, mpk: List[ElGamalKey], ciphertext: ElGamalInnerProductCipher, sk_y: int, y: List[int]) -> int:
+    def decrypt(self,
+                mpk: List[ElGamalKey],
+                ciphertext: ElGamalInnerProductCipher,
+                sk_y: int,
+                y: List[int],
+                limit: int) -> int:
         """Returns inner product of vector y and vector x encrypted in ciphertext
 
         Args:
@@ -103,6 +117,7 @@ class ElGamalInnerProductFE:
             ciphertext (List[]): _description_
             sk_y (int): functional decryption key for vector y
             y (List[y]): vector y
+            limit: upper bound up until which the inner product should be searched for
 
         Returns:
             int: inner product of x and y or None if the inner product was not found
@@ -119,4 +134,4 @@ class ElGamalInnerProductFE:
 
         # constructing ciphertext for additive ElGamal
         c = ElGamalCipher({'c1': c1, 'c2': c2})
-        return self.elgamal.decrypt(pk, sk, c)
+        return self.elgamal.decrypt(pk, sk, c, limit)

@@ -52,8 +52,9 @@ class FullySecureFE:
 
     def set_up(self, security_param: int, vector_length: int) -> (dict, dict):
         """
-        Sets up parameters needed for proper functioning of the scheme. After calling, the get_public_params function
-        may be called to obtain parameters needed for initializing a compatible instance of the scheme.
+        Sets up parameters needed for proper functioning of the scheme and generates master public and secret keys.
+        After calling, the get_public_params function may be called to obtain parameters needed for initializing a
+        compatible instance of the scheme.
         Args:
             security_param: security parameter
             vector_length: supported length of integer vectors
