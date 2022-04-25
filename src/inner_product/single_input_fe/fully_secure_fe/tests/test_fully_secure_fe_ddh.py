@@ -8,14 +8,16 @@ def test_fin_result():
     y = [1, 2, 1, 9, 1]
     n = len(x)
 
-    mpk, msk = FullySecureFE.set_up_keys(1024, n)
+    fe = FullySecureFE()
+
+    mpk, msk = fe.set_up(1024, n)
     print('msk', type(msk))
-    ciphertext = FullySecureFE.encrypt(mpk, x)
+    ciphertext = fe.encrypt(mpk, x)
     print(ciphertext)
 
-    func_key = FullySecureFE.get_functional_key(msk, y)
+    func_key = fe.get_functional_key(msk, y)
 
-    final_result = FullySecureFE.decrypt(mpk, func_key, ciphertext, y, 200)
+    final_result = fe.decrypt(func_key, ciphertext, y, 200)
     expected = np.inner(x, y)
 
     try:
