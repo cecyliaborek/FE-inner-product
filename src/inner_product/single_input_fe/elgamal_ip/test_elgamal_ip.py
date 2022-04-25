@@ -8,11 +8,11 @@ class TestElGamalInnerProduct(unittest.TestCase):
     def test_fin_result(self):
 
         fe = ElGamalInnerProductFE()
-        pk, sk = fe.setUp(1024, 4)
+        pk, sk = fe.set_up(1024, 4)
 
         y = [1, 1, 1, 1]
         x = [1, 2, 3, 4]
-        key_y = fe.getFunctionalKey(sk, y)
+        key_y = fe.get_functional_key(sk, y)
         c_x = fe.encrypt(pk, x)
         obtained_inner_prod = fe.decrypt(pk, c_x, key_y, y)
         expected_inner_prod = np.inner(x, y)

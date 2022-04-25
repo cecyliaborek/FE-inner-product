@@ -18,7 +18,7 @@ from charm.toolbox.integergroup import IntegerGroupQ, integer
 from typing import List, Dict, Tuple
 from src.helpers.additive_elgamal import AdditiveElGamal, ElGamalCipher
 from src.helpers.helpers import reduce_vector_mod, get_int
-from src.errors.vector_size_mismatch_error import VectorSizeMismatchError
+from src.errors.wrong_vector_for_provided_key import WrongVectorForProvidedKey
 import charm
 import numpy as np
 
@@ -44,7 +44,7 @@ class ElGamalInnerProductFE:
     elgamal = AdditiveElGamal(elgamal_group, p, q)
     elgamal_params = {"group": elgamal_group, "p": int(p)}
 
-    def setUp(self, security_parameter: int, vector_length: int) -> Tuple[List[ElGamalKey], List[ElGamalKey]]:
+    def set_up(self, security_parameter: int, vector_length: int) -> Tuple[List[ElGamalKey], List[ElGamalKey]]:
 
         master_public_key = [None] * vector_length
         master_secret_key = [None] * vector_length
@@ -52,7 +52,7 @@ class ElGamalInnerProductFE:
             (master_public_key[i], master_secret_key[i]) = self.elgamal.keygen(secparam=security_parameter)
         return (master_public_key, master_secret_key)
 
-    def getFunctionalKey(self, msk: List[ElGamalKey], y: List[int]) -> int:
+    def get_functional_key(self, msk: List[ElGamalKey], y: List[int]) -> int:
         """Derives functional key for calculating inner product with vector y
 
         Args:
@@ -66,7 +66,7 @@ class ElGamalInnerProductFE:
             int: Functional key corresponding to vector y
         """
         if len(y) > len(msk):
-            raise VectorSizeMismatchError(f'Vector {y} too long for the configured FE')
+            raise WrongVectorForProvidedKey(f'Vector {y} too long for the configured FE')
         y = reduce_vector_mod(y, self.elgamal_params['p'])
         key = 0
         for i in range(len(y)):
@@ -87,7 +87,7 @@ class ElGamalInnerProductFE:
             Dict[str, List[IntegerGroupElement]]: ciphertext corresponding to vector x
         """
         if len(x) > len(mpk):
-            raise VectorSizeMismatchError(f'Vector {x} too long for the configured FE')
+            raise WrongVectorForProvidedKey(f'Vector {x} too long for the configured FE')
         r = self.elgamal_params['group'].random()
         ct_0 = mpk[0]['g'] ** r
         x = reduce_vector_mod(x, self.elgamal_params['p'])

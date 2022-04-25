@@ -103,7 +103,7 @@ class MIFENoPairingsModuloL:
         fe_mpks = [None] * self.vector_len
         fe_msks = [None] * self.vector_len
         for i in range(self.vector_len):
-            fe_mpks[i], fe_msks[i] = self.single_input_fe.setUp(security_param, self.inner_vector_len)
+            fe_mpks[i], fe_msks[i] = self.single_input_fe.set_up(security_param, self.inner_vector_len)
         msk = MSK(ot_mife_key, fe_msks)
         mpk = MPK(fe_mpks)
         return mpk, msk
@@ -117,7 +117,7 @@ class MIFENoPairingsModuloL:
             raise WrongVectorForProvidedKey(
                 f"The length of the provided vector {y} doesn't match the length of the key list {msk.fe_msks}"
             )
-        sk = [self.single_input_fe.getFunctionalKey(msk.fe_msks[i], y[i]) for i in range(len(y))]
+        sk = [self.single_input_fe.get_functional_key(msk.fe_msks[i], y[i]) for i in range(len(y))]
         z = self.ot_mife.get_functional_key(msk.ot_mife_key, y)
         return FunctionalKey(sk, z)
 
