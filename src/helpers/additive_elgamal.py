@@ -46,7 +46,6 @@ class ElGamalCipher(dict):
             lhs_c2 = dict.__getitem__(self, 'c2')
             rhs_c2 = dict.__getitem__(other, 'c2')
             return ElGamalCipher({'c1': lhs_c1 * rhs_c1, 'c2': lhs_c2 * rhs_c2})
-        return None
 
 
 class AdditiveElGamal(PKEnc):
@@ -68,7 +67,7 @@ class AdditiveElGamal(PKEnc):
         if group.p == 0 or group.q == 0:
             group.paramgen(secparam)
         # x is private, g is public param
-        x = group.random();
+        x = group.random()
         h = self.g ** x
         if debug:
             print('Public parameters...')
