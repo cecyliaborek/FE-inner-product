@@ -1,12 +1,12 @@
 import unittest
-import src.inner_product.single_input_fe.fully_secure_fe.fully_secure_fe_lwe_short_int
+from src.inner_product.single_input_fe.fully_secure_fe.fully_secure_fe_lwe_short_int import FullySecureFeLweShortInt
 from src.helpers.matrix import Matrix
 
 
 class TestFullySecureFeLWEShortInt(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.fe = src.inner_product.single_input_fe.fully_secure_fe.fully_secure_fe_lwe_short_int
+        self.fe = FullySecureFeLweShortInt()
 
     def test_set_up(self):
         mpk, msk = self.fe.set_up(11, 10, 40, 40)

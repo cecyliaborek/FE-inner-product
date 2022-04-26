@@ -3,7 +3,7 @@ import unittest
 from src.errors.wrong_vector_for_provided_key import WrongVectorForProvidedKey
 from src.inner_product.single_input_fe.elgamal_ip.elgamal_ip import ElGamalInnerProductCipher
 from src.inner_product.mife.mife_no_pairings.function_families import MultiInputInnerProductZl
-from src.inner_product.mife.mife_no_pairings.mife_no_pairings import MIFENoPairingsModuloL, MPK, MSK, FunctionalKey
+from src.inner_product.mife.mife_no_pairings.mife_no_pairings_modulo import MIFENoPairingsModuloL, MPK, MSK, FunctionalKey
 
 
 class TestMIFENoPairings(unittest.TestCase):

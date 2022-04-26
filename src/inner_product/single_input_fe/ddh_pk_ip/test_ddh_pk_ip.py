@@ -1,10 +1,10 @@
 import numpy as np
 
-from src.inner_product.single_input_fe.ddh_pk_ip.ddh_pk_ip import DDH_PK
+from src.inner_product.single_input_fe.ddh_pk_ip.ddh_pk_ip import PublicKeyDDHFe
 
 
-def testFinResult():
-    fe = DDH_PK()
+def test_fin_result():
+    fe = PublicKeyDDHFe()
 
     x = [1, 4, 6, 3, 5]
     y = [1, 2, 1, 2, 1]
@@ -18,7 +18,7 @@ def testFinResult():
 
     func_key = fe.get_functional_key(msk, y)
 
-    final_result = fe.decrypt(mpk, ciphertext, func_key, y)
+    final_result = fe.decrypt(mpk, ciphertext, func_key, y, 200)
     expected = np.inner(x, y)
 
     try:
@@ -29,4 +29,4 @@ def testFinResult():
 
 
 if __name__ == "__main__":
-    testFinResult()
+    test_fin_result()

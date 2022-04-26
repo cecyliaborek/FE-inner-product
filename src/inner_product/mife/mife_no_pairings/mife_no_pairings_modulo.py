@@ -3,6 +3,7 @@ Abdalla, Michel et al. Multi-input functional encryption schemes without pairing
     modulo L
 
 
+
 | From:         Abdalla, Michel et al. “Multi-Input Functional Encryption for Inner Products: Function-Hiding
                 Realizations and Constructions Without Pairings.”
 | Published in: Advances in Cryptology – CRYPTO 2018. Cham: Springer International Publishing, 2018. 597–627. Web.
@@ -108,7 +109,7 @@ def set_up(func_descr: MultiInputInnerProductZl, security_param: int) -> (MPK, M
     fe_mpks = [None] * vector_len
     fe_msks = [None] * vector_len
     for i in range(vector_len):
-        fe_mpks[i], fe_msks[i] = single_input_fe.setUp(security_param, inner_vector_len)
+        fe_mpks[i], fe_msks[i] = single_input_fe.set_up(security_param, inner_vector_len)
     msk = MSK(ot_mife_key, fe_msks)
     mpk = MPK(ot_mife_modulus, fe_mpks)
     return mpk, msk
@@ -124,13 +125,13 @@ def get_functional_key(mpk: MPK, msk: MSK, y):
         raise WrongVectorForProvidedKey(
             f"The length of the provided vector {y} doesn't match the length of the key list {msk.fe_msks}"
         )
-    sk = [single_input_fe.getFunctionalKey(msk.fe_msks[i], y[i]) for i in range(len(y))]
-    z = ot_mife.get_functional_key(msk.ot_mife_key,mpk.ot_mife_modulus, y)
+    sk = [single_input_fe.get_functional_key(msk.fe_msks[i], y[i]) for i in range(len(y))]
+    z = ot_mife.get_functional_key(msk.ot_mife_key, mpk.ot_mife_modulus, y)
     return FunctionalKey(sk, z)
 
 
 def decrypt(mpk: MPK, func_key: FunctionalKey, ciphertext, y):
     d = []
     for i in range(len(ciphertext)):
-        d.append(single_input_fe.decrypt(mpk.fe_mpks[i], ciphertext[i], func_key.sk[i], y[i]))
+        d.append(single_input_fe.decrypt(mpk.fe_mpks[i], ciphertext[i], func_key.sk[i], y[i], 2000))
     return (sum(d) - func_key.z) % mpk.ot_mife_modulus
