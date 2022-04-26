@@ -7,7 +7,7 @@ from typing import List
 OneTimeSecureKey = List[List[int]]
 
 
-def set_up(func_descr: MultiInputInnerProductZl, security_param: int) -> (OneTimeSecureKey, dict):
+def set_up(func_descr: MultiInputInnerProductZl, security_param: int) -> (OneTimeSecureKey, int):
     vector_len = func_descr.n
     inner_vector_len = func_descr.m
     modulus = func_descr.L
@@ -15,24 +15,22 @@ def set_up(func_descr: MultiInputInnerProductZl, security_param: int) -> (OneTim
     pp = {'modulus': modulus}  # public parameters
     for i in range(vector_len):
         key[i] = [get_random_from_Zl(modulus) for _ in range(inner_vector_len)]
-    return key, pp
+    return key, modulus
 
 
-def encrypt(key: OneTimeSecureKey, pp: dict, i: int, x_i: List[int]) -> List[int]:
+def encrypt(key: OneTimeSecureKey, modulus: int, i: int, x_i: List[int]) -> List[int]:
     if i > len(key):
         raise WrongVectorForProvidedKey(f'Index {i} out of range for key {key}')
-    modulus = pp['modulus']
     try:
         return add_vectors_mod(key[i], x_i, modulus)
     except VectorSizeMismatchError:
         raise WrongVectorForProvidedKey(f"Vector {x_i} doesn't match dimension {i} of the provided key: {key[i]}")
 
 
-def get_functional_key(key: OneTimeSecureKey, pp: dict, y: List[List[int]]) -> int:
+def get_functional_key(key: OneTimeSecureKey, modulus: int, y: List[List[int]]) -> int:
     if len(key) != len(y):
         raise WrongVectorForProvidedKey('Different lengths of the provided key and vector')
     n = len(key)
-    modulus = pp['modulus']
     intermediate = [None] * n
     for i in range(n):
         try:
@@ -43,11 +41,10 @@ def get_functional_key(key: OneTimeSecureKey, pp: dict, y: List[List[int]]) -> i
     return sum(intermediate) % modulus
 
 
-def decrypt(func_key: int, pp: dict, ciphertext: List[List[int]], y: List[List[int]]) -> int:
+def decrypt(func_key: int, modulus: int, ciphertext: List[List[int]], y: List[List[int]]) -> int:
     if len(ciphertext) != len(y):
         raise WrongVectorForProvidedKey(f'Different lengths of provided ciphertext and vector')
     n = len(ciphertext)
-    modulus = pp['modulus']
     intermediate = [None] * n
     for i in range(n):
         try:

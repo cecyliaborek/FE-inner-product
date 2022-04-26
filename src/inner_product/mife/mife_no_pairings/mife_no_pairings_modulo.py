@@ -47,14 +47,23 @@ class MSK:
 
 
 class MPK:
-    def __init__(self, fe_mpks: list):
-        if type(fe_mpks) != list:
-            assert False, "No list of single-input fe's public keys provided"
+    def __init__(self, ot_mife_modulus: int, fe_mpks: list):
         self.fe_mpks = fe_mpks
+        self.ot_mife_modulus = ot_mife_modulus
 
     @property
     def fe_mpks(self):
         return self._fe_mpks
+
+    @property
+    def ot_mife_modulus(self):
+        return self._ot_mife_modulus
+
+    @ot_mife_modulus.setter
+    def ot_mife_modulus(self, ot_mife_modulus):
+        if type(ot_mife_modulus) != int:
+            raise ValueError("ot_mife_modulus should be an integer representing modulus of one time secure mife")
+        self._ot_mife_modulus = ot_mife_modulus
 
     @fe_mpks.setter
     def fe_mpks(self, fe_mpks):
@@ -87,6 +96,7 @@ class FunctionalKey:
         # todo: check if instance of ot mife func key
         self._z = z
 
+
 ot_mife = src.inner_product.mife.mife_no_pairings.one_time_secure_mife
 single_input_fe = ElGamalInnerProductFE()
 
@@ -94,29 +104,28 @@ single_input_fe = ElGamalInnerProductFE()
 def set_up(func_descr: MultiInputInnerProductZl, security_param: int) -> (MPK, MSK):
     vector_len = func_descr.n
     inner_vector_len = func_descr.m
-    modulus = func_descr.L
-    ot_mife_key = ot_mife.set_up(func_descr, security_param)
+    ot_mife_key, ot_mife_modulus = ot_mife.set_up(func_descr, security_param)
     fe_mpks = [None] * vector_len
     fe_msks = [None] * vector_len
     for i in range(vector_len):
         fe_mpks[i], fe_msks[i] = single_input_fe.setUp(security_param, inner_vector_len)
     msk = MSK(ot_mife_key, fe_msks)
-    mpk = MPK(fe_mpks)
+    mpk = MPK(ot_mife_modulus, fe_mpks)
     return mpk, msk
 
 
 def encrypt(mpk: MPK, msk: MSK, i, x_i):
-    w_i = ot_mife.encrypt(msk.ot_mife_key, i, x_i)
+    w_i = ot_mife.encrypt(msk.ot_mife_key, mpk.ot_mife_modulus, i, x_i)
     return single_input_fe.encrypt(mpk.fe_mpks[i], w_i)
 
 
-def get_functional_key(msk: MSK, y):
+def get_functional_key(mpk: MPK, msk: MSK, y):
     if len(y) != len(msk.fe_msks):
         raise WrongVectorForProvidedKey(
             f"The length of the provided vector {y} doesn't match the length of the key list {msk.fe_msks}"
         )
     sk = [single_input_fe.getFunctionalKey(msk.fe_msks[i], y[i]) for i in range(len(y))]
-    z = ot_mife.get_functional_key(msk.ot_mife_key, y)
+    z = ot_mife.get_functional_key(msk.ot_mife_key,mpk.ot_mife_modulus, y)
     return FunctionalKey(sk, z)
 
 
@@ -124,4 +133,4 @@ def decrypt(mpk: MPK, func_key: FunctionalKey, ciphertext, y):
     d = []
     for i in range(len(ciphertext)):
         d.append(single_input_fe.decrypt(mpk.fe_mpks[i], ciphertext[i], func_key.sk[i], y[i]))
-    return (sum(d) - func_key.z) % modulus
+    return (sum(d) - func_key.z) % mpk.ot_mife_modulus
