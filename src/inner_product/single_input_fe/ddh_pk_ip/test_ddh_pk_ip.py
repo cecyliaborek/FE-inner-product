@@ -1,10 +1,9 @@
 import numpy as np
-
-from src.inner_product.single_input_fe.ddh_pk_ip.ddh_pk_ip import PublicKeyDDHFe
+import src.inner_product.single_input_fe.ddh_pk_ip.ddh_pk_ip
 
 
 def test_fin_result():
-    fe = PublicKeyDDHFe()
+    fe = src.inner_product.single_input_fe.ddh_pk_ip.ddh_pk_ip
 
     x = [1, 4, 6, 3, 5]
     y = [1, 2, 1, 2, 1]
@@ -16,7 +15,7 @@ def test_fin_result():
     print('ciphertext', type(ciphertext['ct0']))
     print(ciphertext['ct0'])
 
-    func_key = fe.get_functional_key(msk, y)
+    func_key = fe.get_functional_key(mpk, msk, y)
 
     final_result = fe.decrypt(mpk, ciphertext, func_key, y, 200)
     expected = np.inner(x, y)
