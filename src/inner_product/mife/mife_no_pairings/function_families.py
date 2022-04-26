@@ -8,7 +8,7 @@ class MultiInputInnerProductZl:
 
 class MultiInputBoundedNormInnerProductZ:
 
-    def __init__(self, n, m, X, Y):
+    def __init__(self, m, n, X, Y):
         self.n = n
         self.m = m
         self.X = X

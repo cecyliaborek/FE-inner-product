@@ -2,7 +2,7 @@ import unittest
 
 from src.helpers.helpers import inner_product_matrices
 from src.inner_product.mife.mife_no_pairings.function_families import MultiInputInnerProductZl
-from src.inner_product.mife.mife_no_pairings.mife_no_pairings import MIFENoPairingsModuloL
+from src.inner_product.mife.mife_no_pairings.mife_no_pairings_modulo import MIFENoPairingsModuloL
 
 
 class TestMIFENoPairings(unittest.TestCase):

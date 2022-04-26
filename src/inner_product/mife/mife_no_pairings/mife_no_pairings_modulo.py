@@ -128,9 +128,3 @@ class MIFENoPairingsModuloL:
         return (sum(d) - func_key.z) % self.modulus
 
 
-class MIFENoPairingsBoundedNorm:
-
-    def __init__(self, func_descr: MultiInputBoundedNormInnerProductZ) -> None:
-        self.vector_len = func_descr.n
-        self.inner_vector_len = func_descr.m
-        self.ot_mife = OneTimeSecureMIFE(func_descr)
