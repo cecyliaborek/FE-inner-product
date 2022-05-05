@@ -1,6 +1,6 @@
 import numpy as np
 
-from src.inner_product.single_input_fe.fully_secure_fe.fully_secure_fe_ddh import FullySecureFE
+import src.inner_product.single_input_fe.fully_secure_fe.fully_secure_fe_ddh
 
 
 def test_fin_result():
@@ -8,16 +8,16 @@ def test_fin_result():
     y = [1, 2, 1, 9, 1]
     n = len(x)
 
-    fe = FullySecureFE()
+    fe = src.inner_product.single_input_fe.fully_secure_fe.fully_secure_fe_ddh
 
     mpk, msk = fe.set_up(1024, n)
     print('msk', type(msk))
     ciphertext = fe.encrypt(mpk, x)
     print(ciphertext)
 
-    func_key = fe.get_functional_key(msk, y)
+    func_key = fe.get_functional_key(mpk, msk, y)
 
-    final_result = fe.decrypt(func_key, ciphertext, y, 200)
+    final_result = fe.decrypt(mpk, func_key, ciphertext, y, 200)
     expected = np.inner(x, y)
 
     try:
