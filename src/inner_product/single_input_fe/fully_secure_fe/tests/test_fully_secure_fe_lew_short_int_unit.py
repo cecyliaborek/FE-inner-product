@@ -1,12 +1,12 @@
 import unittest
-from src.inner_product.single_input_fe.fully_secure_fe.fully_secure_fe_lwe_short_int import FullySecureFeLweShortInt
+import src.inner_product.single_input_fe.fully_secure_fe.fully_secure_fe_lwe_short_int
 from src.helpers.matrix import Matrix
 
 
 class TestFullySecureFeLWEShortInt(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.fe = FullySecureFeLweShortInt()
+        self.fe = src.inner_product.single_input_fe.fully_secure_fe.fully_secure_fe_lwe_short_int
 
     def test_set_up(self):
         mpk, msk = self.fe.set_up(11, 10, 40, 40)
@@ -15,7 +15,7 @@ class TestFullySecureFeLWEShortInt(unittest.TestCase):
 
     def test_func_key_generation(self):
         mpk, msk = self.fe.set_up(11, 10, 40, 40)
-        func_key = self.fe.get_functional_key(msk, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+        func_key = self.fe.get_functional_key(mpk, msk, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
         self.assertIsInstance(func_key, Matrix)
 
     def test_encryption(self):
@@ -40,9 +40,9 @@ class TestFullySecureFeLWEShortInt(unittest.TestCase):
         x = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
         y = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         c = self.fe.encrypt(mpk, x)
-        func_key = self.fe.get_functional_key(msk, y)
+        func_key = self.fe.get_functional_key(mpk, msk, y)
 
-        decrypted = self.fe.decrypt(mpk, y, func_key, c)
+        decrypted = self.fe.decrypt(mpk, func_key, y, c)
         self.assertIsInstance(decrypted, int)
         print(decrypted)
 

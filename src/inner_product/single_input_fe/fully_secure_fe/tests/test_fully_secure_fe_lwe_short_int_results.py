@@ -1,19 +1,19 @@
 import numpy as np
-from src.inner_product.single_input_fe.fully_secure_fe.fully_secure_fe_lwe_short_int import FullySecureFeLweShortInt
+import src.inner_product.single_input_fe.fully_secure_fe.fully_secure_fe_lwe_short_int
 
 
 def test_final_result():
 
-    fe = FullySecureFeLweShortInt()
+    fe = src.inner_product.single_input_fe.fully_secure_fe.fully_secure_fe_lwe_short_int
 
     x = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
     y = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
     mpk, msk = fe.set_up(20, 10, 21, 11)
     c = fe.encrypt(mpk, x)
-    func_key = fe.get_functional_key(msk, y)
+    func_key = fe.get_functional_key(mpk, msk, y)
 
-    obtained_ip = fe.decrypt(mpk, y, func_key, c)
+    obtained_ip = fe.decrypt(mpk, func_key, y, c)
     expected_ip = np.inner(x, y)
 
     try:
