@@ -42,7 +42,7 @@ func_key = fe.get_functional_key(mpk=mpk, msk=msk, y=y)
 x = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
 x_ciphertext = fe.encrypt(mpk=mpk, x=x)
 
-# decrypt inner product of x and y lying with some limit
+# decrypt inner product of x and y lying within some limit
 inner_product = fe.decrypt(mpk=mpk, ciphertext=x_ciphertext, sk_y=func_key, y=y, limit=200)
 ```
 
