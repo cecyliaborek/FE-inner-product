@@ -21,7 +21,7 @@ class TestMIFENoPairings(unittest.TestCase):
 
         func_key = self.mife.get_functional_key(self.mpk, self.msk, y)
 
-        result_inner_prod = self.mife.decrypt(self.mpk, func_key, ciphertexts, y)
+        result_inner_prod = self.mife.decrypt(self.mpk, func_key, ciphertexts, y, 2000)
         expected_inner_prod = inner_product_matrices(x, y) % self.mpk.ot_mife_modulus
         self.assertEqual(expected_inner_prod, result_inner_prod,
                          f'Expected = {expected_inner_prod}, obtained = {result_inner_prod}')

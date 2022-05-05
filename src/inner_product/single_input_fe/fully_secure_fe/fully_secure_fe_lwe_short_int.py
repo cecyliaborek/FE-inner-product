@@ -33,8 +33,8 @@ debug = True
 
 
 def set_up(n: int, vectors_len: int, message_bound: int, vector_bound: int) -> (dict, Matrix):
-    """
-    Sets ups parameters needed for proper functioning of the scheme and returns master public and secret keys.
+    """Sets ups parameters needed for proper functioning of the scheme and returns master public and secret keys.
+
     Args:
         n:
         vectors_len: length of the vectors to encrypt and get functional key for
@@ -64,8 +64,8 @@ def set_up(n: int, vectors_len: int, message_bound: int, vector_bound: int) -> (
 
 
 def get_functional_key(mpk: dict, msk: Matrix, y: List[int]) -> Matrix:
-    """
-    Generates a functional key for integer vector y
+    """Derives functional key for calculating inner product with vector y
+
     Args:
         mpk: the master public key
         msk: the master secret key
@@ -79,8 +79,8 @@ def get_functional_key(mpk: dict, msk: Matrix, y: List[int]) -> Matrix:
 
 
 def encrypt(mpk: dict, x: List[int]) -> Ciphertext:
-    """
-    Encrypts integer vector x
+    """Encrypts integer vector x
+
     Args:
         mpk: master public key
         x: vector of integers to encrypt
@@ -108,8 +108,8 @@ def encrypt(mpk: dict, x: List[int]) -> Ciphertext:
 
 
 def decrypt(mpk: dict, func_key: Matrix, y: List[int], ciphertext: Ciphertext) -> int:
-    """
-    Recovers the inner product of vectors x and y from x's ciphertext and y's functional key
+    """Recovers the inner product of vectors x and y from x's ciphertext and y's functional key
+
     Args:
         mpk: the master public key
         func_key: the functional key for vector y

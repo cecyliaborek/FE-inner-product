@@ -14,6 +14,9 @@ Agrawal et al. Fully secure functional encryption scheme from DDH
 
 :Authors:       Cecylia Borek
 :Date:          03/2022
+
+Note: Because to recover the final result of inner product discrete logarithm calculation is needed, the inner product
+should lie within a reasonable limit, otherwise the calculation may take too long.
 """
 from src.helpers.helpers import generate_group, get_random_generator, inner_product_group_vector, dummy_discrete_log, \
     get_int, get_modulus, reduce_vector_mod
@@ -23,8 +26,8 @@ import numpy as np
 
 
 def set_up(security_param: int, vector_length: int) -> (dict, dict):
-    """
-    Sets up parameters needed for proper functioning of the scheme and generates master public and secret keys.
+    """Sets up parameters needed for proper functioning of the scheme and generates master public and secret keys.
+
     Args:
         security_param: security parameter
         vector_length: supported length of integer vectors
@@ -44,8 +47,8 @@ def set_up(security_param: int, vector_length: int) -> (dict, dict):
 
 
 def get_functional_key(mpk: dict, msk: dict, y: List[int]) -> dict:
-    """
-    Generates a functional key for integer vector y
+    """Derives functional key for calculating inner product with vector y
+
     Args:
         mpk: master public key
         msk: master secret key
@@ -60,8 +63,8 @@ def get_functional_key(mpk: dict, msk: dict, y: List[int]) -> dict:
 
 
 def encrypt(mpk: dict, x: List[int]) -> dict:
-    """
-    Encrypts integer vector x
+    """Encrypts integer vector x
+
     Args:
         mpk: master public key
         x: integer vector to be encrypted
@@ -79,9 +82,10 @@ def encrypt(mpk: dict, x: List[int]) -> dict:
 
 
 def decrypt(mpk: dict, func_key: dict, ciphertext: dict, y: List[int], limit: int) -> int:
-    """
-    Recovers the inner product of vectors x and y from x's ciphertext and functional key for y
+    """Recovers the inner product of vectors x and y from x's ciphertext and functional key for y
+
     Args:
+        mpk: master public key
         func_key: functional key for vector y
         ciphertext: ciphertext encrypting vector x
         y: vector y

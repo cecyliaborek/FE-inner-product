@@ -1,4 +1,7 @@
 class MultiInputInnerProductZl:
+    """A description of function family for inner product modulo L
+
+    """
 
     def __init__(self, L, n, m):
         """
@@ -14,6 +17,9 @@ class MultiInputInnerProductZl:
 
 
 class MultiInputBoundedNormInnerProductZ:
+    """A description of function family for bounded norm inner product
+
+    """
 
     def __init__(self, n, m, X, Y):
         """
